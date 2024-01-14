@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/svelte'
 
-import AudioPlayer from '../lib/AudioPlayer.svelte'
+import AudioPlayer from '../lib/components/AudioPlayer.svelte'
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 const meta = {
