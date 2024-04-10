@@ -95,4 +95,6 @@ class AudioPlayer {
   }
 }
 
-export default AudioPlayer
+const audioPlayer = new AudioPlayer()
+
+export default audioPlayer
