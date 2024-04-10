@@ -1,3 +1,6 @@
+import type PlayQueue from './PlayQueue'
+import playQueue from './PlayQueue'
+
 class AudioPlayer {
   #volume: number = 1
   #ctx?: AudioContext
@@ -6,8 +9,11 @@ class AudioPlayer {
   #sourceElement?: HTMLAudioElement
   #playing: boolean = false
   #initSource: boolean = false
+  #playQueue: typeof PlayQueue
 
-  constructor() {}
+  constructor() {
+    this.#playQueue = playQueue
+  }
 
   play() {
     if (!this.#ctx) {
