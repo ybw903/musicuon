@@ -42,6 +42,7 @@
   "packageManager": "yarn@4.0.2",
   "dependencies": {
     "buffer": "^6.0.3",
+    "dayjs": "^1.11.10",
     "uuid": "^9.0.1"
   }
 }
