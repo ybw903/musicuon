@@ -9,28 +9,33 @@ class AudioPlayer {
   #sourceElement?: HTMLAudioElement
   #playing: boolean = false
   #initSource: boolean = false
+  #currentTime: number = 0
+  #duration: number = 0
+
   #playQueue: typeof PlayQueue
 
   constructor() {
     this.#playQueue = playQueue
   }
 
-  play() {
+  async play() {
     if (!this.#ctx) {
       this.#initAudioContext()
     }
     if (this.#ctx?.state === 'suspended') {
-      this.#ctx?.resume()
+      await this.#ctx?.resume()
     }
     this.#sourceElement?.play()
     this.#playing = true
   }
 
-  pause() {
+  async pause() {
     if (!this.#ctx) {
       this.#initAudioContext()
     }
-    this.#ctx?.suspend()
+    if (this.#ctx?.state === 'running') {
+      await this.#ctx?.suspend()
+    }
     this.#sourceElement?.pause()
     this.#playing = false
   }
@@ -49,6 +54,29 @@ class AudioPlayer {
     return this.#volume
   }
 
+  playtime(time?: number) {
+    if (time === undefined) {
+      return this.#currentTime
+    }
+
+    this.#currentTime = time
+
+    if (!this.#sourceElement) return
+    this.#sourceElement.currentTime = time
+  }
+
+  getDuration() {
+    return this.#duration
+  }
+
+  onDuration(evt: any) {
+    this.#duration = evt.target.duration
+  }
+
+  onCurrentTime(evt: any) {
+    this.#currentTime = evt.target.currentTime
+  }
+
   setSource(source: HTMLAudioElement) {
     if (!this.#ctx) {
       this.#initAudioContext()
@@ -56,6 +84,9 @@ class AudioPlayer {
 
     this.#sourceElement = source
     this.#source = this.#ctx?.createMediaElementSource(source)
+
+    this.#sourceElement.addEventListener('loadedmetadata', this.onDuration.bind(this))
+    this.#sourceElement.addEventListener('timeupdate', this.onCurrentTime.bind(this))
 
     if (this.#gainNode) {
       this.#source?.connect(this.#gainNode)

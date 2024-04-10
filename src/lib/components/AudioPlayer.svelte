@@ -3,26 +3,48 @@
   import PauseIcon from '../../assets/pause.svg'
   import AudioIcon from '../../assets/audio.svg'
   import audioPlayer from '../core/AudioPlayer'
+  import dayjs from 'dayjs'
 
   let audioRef: HTMLAudioElement
   let playing = false
   let volume = 1
+  let currentTime = 0
+  let duration = 0
 
   $: displayVolume = volume * 100
+  $: displayDuration = dayjs.duration(duration, 's').format('mm:ss')
+  $: displayCurrentTime = dayjs.duration(currentTime, 's').format('mm:ss')
 
-  function handlePlay() {
+  async function handlePlay() {
     if (!audioPlayer.isInitSource()) {
       audioPlayer.setSource(audioRef)
       audioPlayer.volume(volume)
     }
 
-    audioPlayer.play()
+    await audioPlayer.play()
     playing = true
   }
 
-  function hanldePause() {
-    audioPlayer.pause()
+  async function hanldePause() {
+    await audioPlayer.pause()
     playing = false
+  }
+
+  function handleCurrentTime(evt: any) {
+    currentTime = evt.target.currentTime
+  }
+
+  function handleLoadedMetaData(evt: any) {
+    duration = evt.target.duration
+  }
+
+  // [TODO] dispatch event through debounced?...
+  function handlePlayTime(evt: any) {
+    hanldePause().then(() => {
+      currentTime = evt.target.value
+      audioPlayer.playtime(evt.target.value)
+      handlePlay()
+    })
   }
 
   function handleVolume(evt: any) {
@@ -32,7 +54,11 @@
 </script>
 
 <div class="h-[120px] w-[320px] rounded-2xl bg-neutral-400">
-  <audio src="/audio/sample.mp3" bind:this={audioRef} />
+  <audio
+    src="/audio/sample.mp3"
+    bind:this={audioRef}
+    on:loadedmetadata={handleLoadedMetaData}
+    on:timeupdate={handleCurrentTime} />
   <div class="pl-[24px] pt-[16px]">
     <p class="text-xl">노래 제목 뭐시기 저시기 어</p>
     <div class="mt-[8px] flex items-center gap-1">
@@ -44,13 +70,13 @@
           alt={playing ? '일시정지 아이콘' : '재생 아아콘'} />
       </button>
 
-      <p>00:00</p>
-      <input type="range" />
-      <p>03:00</p>
+      <p>{displayCurrentTime}</p>
+      <input type="range" value={currentTime} max={duration} on:change={handlePlayTime} />
+      <p>{displayDuration}</p>
     </div>
     <div class="mt-[8px] flex items-center gap-1">
       <img src={AudioIcon} alt="오디오 아이콘" />
-      <input type="range" value={displayVolume} on:change={handleVolume} max="200" />
+      <input type="range" value={displayVolume} max="200" on:change={handleVolume} />
     </div>
   </div>
 </div>
