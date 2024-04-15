@@ -40,6 +40,14 @@ class AudioPlayer {
     this.#playing = false
   }
 
+  nextSong() {
+    return this.#playQueue.next()
+  }
+
+  prevSong() {
+    return this.#playQueue.prev()
+  }
+
   volume(vol?: number) {
     if (vol === undefined) {
       return this.#volume
@@ -65,6 +73,10 @@ class AudioPlayer {
     this.#sourceElement.currentTime = time
   }
 
+  getSong() {
+    return this.#playQueue.pos()
+  }
+
   getDuration() {
     return this.#duration
   }
@@ -80,6 +92,15 @@ class AudioPlayer {
   setSource(source: HTMLAudioElement) {
     if (!this.#ctx) {
       this.#initAudioContext()
+    }
+
+    if (this.#sourceElement) {
+      this.#sourceElement.removeEventListener('timeupdate', this.onCurrentTime.bind(this))
+      this.#sourceElement.removeEventListener('loadedmetadata', this.onDuration.bind(this))
+    }
+
+    if (this.#source && this.#gainNode) {
+      this.#source.disconnect(this.#gainNode)
     }
 
     this.#sourceElement = source

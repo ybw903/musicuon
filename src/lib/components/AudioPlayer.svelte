@@ -30,6 +30,14 @@
     playing = false
   }
 
+  function handlePrev() {
+    console.log(audioPlayer.prevSong())
+  }
+
+  function handleNext() {
+    console.log(audioPlayer.nextSong())
+  }
+
   function handleCurrentTime(evt: any) {
     currentTime = evt.target.currentTime
   }
@@ -53,7 +61,7 @@
   }
 </script>
 
-<div class="h-[120px] w-[320px] rounded-2xl bg-neutral-400">
+<div class="h-[120px] w-[348px] rounded-2xl bg-neutral-400">
   <audio
     src="/audio/sample.mp3"
     bind:this={audioRef}
@@ -61,14 +69,26 @@
     on:timeupdate={handleCurrentTime} />
   <div class="pl-[24px] pt-[16px]">
     <p class="text-xl">노래 제목 뭐시기 저시기 어</p>
-    <div class="mt-[8px] flex items-center gap-1">
-      <button
-        class="rounded-none border-0 bg-inherit p-0"
-        on:click={playing ? hanldePause : handlePlay}>
-        <img
-          src={playing ? PauseIcon : PlayIcon}
-          alt={playing ? '일시정지 아이콘' : '재생 아아콘'} />
-      </button>
+    <div class="mt-[8px] flex items-center gap-2">
+      <span class="flex gap-1">
+        <button
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
+          on:click={handlePrev}>
+          &lt;&lt;
+        </button>
+        <button
+          class="rounded-none border-0 bg-inherit p-0"
+          on:click={playing ? hanldePause : handlePlay}>
+          <img
+            src={playing ? PauseIcon : PlayIcon}
+            alt={playing ? '일시정지 아이콘' : '재생 아아콘'} />
+        </button>
+        <button
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
+          on:click={handleNext}>
+          &gt;&gt;
+        </button>
+      </span>
 
       <p>{displayCurrentTime}</p>
       <input type="range" value={currentTime} max={duration} on:change={handlePlayTime} />

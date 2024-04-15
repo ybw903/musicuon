@@ -14,13 +14,13 @@ class PlayQueue {
   }
 
   prev() {
-    if (this.isFirst()) return
+    if (this.isFirst()) return this.pos()
     this.#index -= 1
     return this.pos()
   }
 
   next() {
-    if (this.isLast()) return
+    if (this.isLast()) return this.pos()
     this.#index += 1
     return this.pos()
   }
