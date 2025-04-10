@@ -1,5 +1,7 @@
 <script lang="ts">
   import svelteLogo from './assets/svelte.svg'
+  import AudioPlayer from './lib/components/AudioPlayer.svelte'
+  import PlayList from './lib/components/PlayList.svelte'
   import viteLogo from '/vite.svg'
 </script>
 
@@ -26,6 +28,8 @@
   </p>
 
   <p class="read-the-docs">Click on the Vite and Svelte logos to learn more</p>
+  <AudioPlayer />
+  <PlayList />
 </main>
 
 <style>

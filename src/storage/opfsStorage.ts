@@ -77,6 +77,4 @@ class OpfsStorage implements IStorage {
   }
 }
 
-const opfsStorage = new OpfsStorage()
-
-export default opfsStorage
+export default OpfsStorage

@@ -2,10 +2,13 @@
   import PlayIcon from '../../assets//polygon.svg'
   import PauseIcon from '../../assets/pause.svg'
   import AudioIcon from '../../assets/audio.svg'
-  import audioPlayer from '../core/AudioPlayer'
+import AudioPlayer from '../core/AudioPlayer'
   import dayjs from 'dayjs'
+  import { onMount } from 'svelte'
 
   let audioRef: HTMLAudioElement
+  let audioPlayer: AudioPlayer
+
   let playing = false
   let volume = 1
   let currentTime = 0
@@ -14,6 +17,10 @@
   $: displayVolume = volume * 100
   $: displayDuration = dayjs.duration(duration, 's').format('mm:ss')
   $: displayCurrentTime = dayjs.duration(currentTime, 's').format('mm:ss')
+
+  onMount(() => {
+    audioPlayer = new AudioPlayer()
+  })
 
   async function handlePlay() {
     if (!audioPlayer.isInitSource()) {

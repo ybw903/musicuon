@@ -1,15 +1,18 @@
 import type PlayList from './PlayList'
-import playList from './PlayList'
 
 class PlayQueue {
-  #playList: typeof PlayList
+  #playList?: typeof PlayList
   #index: number = 0
 
   constructor() {
-    this.#playList = playList
+    
   }
 
   pos() {
+    if (!this.#playList) {
+      // [TODO] load func call
+      return
+    }
     return this.#playList.getPlayList()[this.#index]
   }
 
@@ -30,10 +33,17 @@ class PlayQueue {
   }
 
   isLast() {
+    if (!this.#playList) {
+      // [TODO] load func call
+      return
+    }
     return this.#playList.length() - 1 === this.#index
+  }
+
+  // [TODO] impl
+  loadPlayList () {
+
   }
 }
 
-const playQueue = new PlayQueue()
-
-export default playQueue
+export default PlayQueue

@@ -1,6 +1,6 @@
 import { v3 as md5 } from 'uuid'
 import { type IStorage } from '../../storage'
-import opfsStorage from '../../storage/opfsStorage'
+import OpfsStorage from '../../storage/opfsStorage'
 
 class PlayList {
   #list: string[] = []
@@ -8,7 +8,7 @@ class PlayList {
   #storage: IStorage
 
   constructor() {
-    this.#storage = opfsStorage
+    this.#storage = new OpfsStorage()
     this.loadList()
   }
 

@@ -1,5 +1,4 @@
-import type PlayQueue from './PlayQueue'
-import playQueue from './PlayQueue'
+import PlayQueue from './PlayQueue'
 
 class AudioPlayer {
   #volume: number = 1
@@ -12,10 +11,10 @@ class AudioPlayer {
   #currentTime: number = 0
   #duration: number = 0
 
-  #playQueue: typeof PlayQueue
+  #playQueue:  PlayQueue
 
   constructor() {
-    this.#playQueue = playQueue
+    this.#playQueue = new PlayQueue()
   }
 
   async play() {
@@ -147,6 +146,5 @@ class AudioPlayer {
   }
 }
 
-const audioPlayer = new AudioPlayer()
 
-export default audioPlayer
+export default AudioPlayer
