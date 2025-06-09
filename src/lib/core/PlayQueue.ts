@@ -1,12 +1,10 @@
 import type PlayList from './PlayList'
 
 class PlayQueue {
-  #playList?: typeof PlayList
+  #playList?: PlayList
   #index: number = 0
 
-  constructor() {
-    
-  }
+  constructor() {}
 
   pos() {
     if (!this.#playList) {
@@ -41,9 +39,7 @@ class PlayQueue {
   }
 
   // [TODO] impl
-  loadPlayList () {
-
-  }
+  loadPlayList() {}
 }
 
 export default PlayQueue

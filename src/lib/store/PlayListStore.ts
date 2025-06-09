@@ -1,8 +1,9 @@
-import { writable } from 'svelte/store'
-import playListManager from '../core/PlayList'
+import { readable, writable } from 'svelte/store'
+import PlayList from '../core/PlayList'
 
 function createPlayListStore() {
   const { subscribe, set } = writable<string[]>([])
+  const playListManager = new PlayList()
 
   const addSong = async (song: string) => {
     await playListManager.add(song)
