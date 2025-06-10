@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "dev": "turbo run dev",
     "dev:audio-player": "turbo run dev --filter=@musicuon/audio-player --concurrency=50",
     "dev:play-list": "turbo run dev --filter=@musicuon/play-list --concurrency=50",
     "build": "turbo run build",

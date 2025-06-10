@@ -26,5 +26,8 @@
     "buffer": "^6.0.3",
     "uuid": "^9.0.1",
     "@musicuon/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8"
   }
 }
