@@ -12,6 +12,7 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.5.0",
     "@tsconfig/svelte": "^5.0.4",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.4",
