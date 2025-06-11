@@ -4,7 +4,10 @@
   import AudioIcon from '../../assets/audio.svg'
   import { AudioPlayer } from '@musicuon/core'
   import dayjs from 'dayjs'
+  import durationPlugin from 'dayjs/plugin/duration'
   import { onMount } from 'svelte'
+
+  dayjs.extend(durationPlugin)
 
   let audioRef: HTMLAudioElement
   let audioPlayer: AudioPlayer

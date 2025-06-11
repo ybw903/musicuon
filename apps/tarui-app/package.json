@@ -1,5 +1,5 @@
 {
-  "name": "@musicuon/play-list",
+  "name": "@musicuon/tauri-app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,6 +10,9 @@
     "check-types": "svelte-check --tsconfig ./tsconfig.json",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "@musicuon/ui": "workspace:*"
+  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "svelte": "^4.2.20",
@@ -18,9 +21,5 @@
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
     "vite": "^5.4.19"
-  },
-  "dependencies": {
-    "@musicuon/core": "workspace:*",
-    "dayjs": "^1.11.13"
   }
 }
