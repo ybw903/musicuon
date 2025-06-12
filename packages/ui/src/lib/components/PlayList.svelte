@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import { playList } from '../../store'
 
+  export let env: string
   let id = 0
 
   const handleAdd = async () => {
