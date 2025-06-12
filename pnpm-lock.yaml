@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@tauri-apps/plugin-dialog':
+        specifier: ^2.2.2
+        version: 2.2.2
       '@tauri-apps/plugin-sql':
         specifier: ^2.2.0
         version: 2.2.0
@@ -1053,6 +1056,12 @@ packages:
       '@tauri-apps/cli-win32-ia32-msvc': 2.5.0
       '@tauri-apps/cli-win32-x64-msvc': 2.5.0
     dev: true
+
+  /@tauri-apps/plugin-dialog@2.2.2:
+    resolution: {integrity: sha512-Pm9qnXQq8ZVhAMFSEPwxvh+nWb2mk7LASVlNEHYaksHvcz8P6+ElR5U5dNL9Ofrm+uwhh1/gYKWswK8JJJAh6A==}
+    dependencies:
+      '@tauri-apps/api': 2.5.0
+    dev: false
 
   /@tauri-apps/plugin-sql@2.2.0:
     resolution: {integrity: sha512-yGdybpaMENe/p6lTXslvDHYNNvD9qB7palaBBF5fJHdYSkwd3vrLiYU9dFfLwUAwnsBylND55EiivWsjhazejA==}

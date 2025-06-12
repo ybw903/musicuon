@@ -1,9 +1,9 @@
-import { readable, writable } from 'svelte/store'
-import { PlayList } from '@musicuon/core'
+import { writable } from 'svelte/store'
+import { PlayList, type ISong } from '@musicuon/core'
 
 function createPlayListStore() {
-  const { subscribe, set } = writable<string[]>([])
-  const playListManager = new PlayList()
+  let playListManager: PlayList | null = null
+  const { subscribe, set } = writable<ISong[]>([])
 
   const addSong = async (song: string) => {
     await playListManager.add(song)
@@ -15,7 +15,8 @@ function createPlayListStore() {
     set(playListManager.getPlayList())
   }
 
-  const init = async () => {
+  const init = async (env: 'web' | 'webview') => {
+    playListManager = new PlayList({ storage: env === 'web' ? 'OPFS' : 'DB' })
     await playListManager.loadList()
     set(playListManager.getPlayList())
   }

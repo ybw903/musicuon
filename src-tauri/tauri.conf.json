@@ -5,7 +5,7 @@
   "identifier": "com.tauri.dev",
   "build": {
     "frontendDist": "../apps/tauri-app/dist",
-    "devUrl": "http://localhost:5173",
+    "devUrl": "http://localhost:5173/play-list/",
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build"
   },
@@ -21,6 +21,11 @@
     ],
     "security": {
       "csp": null
+    }
+  },
+  "plugins": {
+    "sql": {
+      "preload": ["sqlite:musicuon.db"]
     }
   },
   "bundle": {

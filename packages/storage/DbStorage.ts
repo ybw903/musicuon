@@ -12,25 +12,23 @@ class DbStorage implements IStorage {
       if (!this.db) return
 
       await this.db.execute('INSERT into songs (id, path) VALUES ($1, $2)', [key, value])
-
-      await this.db.close()
     } catch (error) {
       throw error
     }
   }
 
-  async get(key: string): Promise<Buffer | null> {
+  // TODO: change return type
+  async get(key: string): Promise<any> {
     try {
       await this.init()
 
       if (!this.db) return null
 
-      const songs = await this.db.select<string[]>('SELECT path from songs WHERE id = $1', [key])
-      await this.db.close()
+      const songs = await this.db.select<string[]>('SELECT * from songs WHERE id = $1', [key])
 
       if (songs.length === 0) return null
 
-      return new Buffer(songs[0])
+      return songs
     } catch (error) {
       throw error
     }
@@ -42,8 +40,7 @@ class DbStorage implements IStorage {
 
       if (!this.db) return []
 
-      const songs = await this.db.select<string[]>('SELECT path from songs')
-      await this.db.close()
+      const songs = await this.db.select<string[]>('SELECT * from songs')
 
       return songs
     } catch (error) {
@@ -58,8 +55,6 @@ class DbStorage implements IStorage {
       if (!this.db) return null
 
       await this.db.execute('DELETE from songs WHERE id = $1', [key])
-
-      await this.db.close()
     } catch (error) {
       throw error
     }
@@ -72,7 +67,6 @@ class DbStorage implements IStorage {
 
     const keys = await this.db.select<string[]>('SELECT id from songs')
 
-    await this.db.close()
     return keys
   }
 

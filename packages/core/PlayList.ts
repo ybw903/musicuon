@@ -1,28 +1,42 @@
-import { v3 as md5 } from 'uuid'
 import { Buffer } from 'buffer'
 import { type IStorage } from '@musicuon/storage'
-import { OpfsStorage } from '@musicuon/storage'
+import { OpfsStorage, DbStorage } from '@musicuon/storage'
+
+interface PlayListOptions {
+  storage?: 'DB' | 'OPFS'
+}
+export interface ISong {
+  id: string
+  source: string
+}
 
 class PlayList {
-  #list: string[] = []
+  #list: ISong[] = []
   #initLoad: boolean = false
   #storage: IStorage
 
-  constructor() {
-    this.#storage = new OpfsStorage()
+  constructor(options?: PlayListOptions) {
+    const { storage = 'OPFS' } = options ?? {}
+
+    if (storage === 'OPFS') {
+      this.#storage = new OpfsStorage()
+    } else {
+      this.#storage = new DbStorage()
+    }
+
     this.loadList()
   }
 
   async add(source: string) {
-    const key = md5(source, '1a30bae5-e589-47b1-9e77-a7da2cdbc2b8')
+    const key = String(new Date().valueOf())
     await this.#storage.set(key, Buffer.from(source))
-    this.#list.push(source)
+    this.#list.push({ id: key, source })
   }
 
-  async remove(index: number) {
-    const key = md5(this.#list[index], '1a30bae5-e589-47b1-9e77-a7da2cdbc2b8')
-    await this.#storage.remove(key)
-    this.#list.splice(index, 1)
+  async remove(idx: number) {
+    const { id, source } = this.#list[idx]
+    await this.#storage.remove(id)
+    this.#list.splice(idx, 1)
   }
 
   clear() {
@@ -44,7 +58,7 @@ class PlayList {
     for (const key of keys) {
       const buffer = await this.#storage.get(key)
       if (buffer) {
-        list.push(buffer.toString())
+        list.push({ id: key, source: buffer.toString() })
       }
     }
     this.#list = list
