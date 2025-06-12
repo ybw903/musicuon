@@ -10,6 +10,10 @@ onlyBuiltDependencies:
 importers:
 
   .:
+    dependencies:
+      '@tauri-apps/plugin-sql':
+        specifier: ^2.2.0
+        version: 2.2.0
     devDependencies:
       '@tauri-apps/cli':
         specifier: ^2.5.0
@@ -940,6 +944,10 @@ packages:
       vite: 5.4.19(@types/node@24.0.0)
     dev: true
 
+  /@tauri-apps/api@2.5.0:
+    resolution: {integrity: sha512-Ldux4ip+HGAcPUmuLT8EIkk6yafl5vK0P0c0byzAKzxJh7vxelVtdPONjfgTm96PbN24yjZNESY8CKo8qniluA==}
+    dev: false
+
   /@tauri-apps/cli-darwin-arm64@2.5.0:
     resolution: {integrity: sha512-VuVAeTFq86dfpoBDNYAdtQVLbP0+2EKCHIIhkaxjeoPARR0sLpFHz2zs0PcFU76e+KAaxtEtAJAXGNUc8E1PzQ==}
     engines: {node: '>= 10'}
@@ -1045,6 +1053,12 @@ packages:
       '@tauri-apps/cli-win32-ia32-msvc': 2.5.0
       '@tauri-apps/cli-win32-x64-msvc': 2.5.0
     dev: true
+
+  /@tauri-apps/plugin-sql@2.2.0:
+    resolution: {integrity: sha512-yGdybpaMENe/p6lTXslvDHYNNvD9qB7palaBBF5fJHdYSkwd3vrLiYU9dFfLwUAwnsBylND55EiivWsjhazejA==}
+    dependencies:
+      '@tauri-apps/api': 2.5.0
+    dev: false
 
   /@tsconfig/svelte@5.0.4:
     resolution: {integrity: sha512-BV9NplVgLmSi4mwKzD8BD/NQ8erOY/nUE/GpgWe2ckx+wIQF5RyRirn/QsSSCPeulVpc3RA/iJt6DpfTIZps0Q==}
