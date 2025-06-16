@@ -2,20 +2,21 @@
   import { onMount } from 'svelte'
   import { playList } from '../../store'
   import { open } from '@tauri-apps/plugin-dialog'
+  import { convertFileSrc } from '@tauri-apps/api/core'
 
   export let env: 'web' | 'webview'
 
   const handleAdd = async () => {
-    let file
+    let filePath
     if (env === 'webview') {
-      file = await open({ multiple: false })
+      filePath = await open({ multiple: false })
     } else {
     }
 
-    if (!file) return
+    if (!filePath) return
 
-    await playList.addSong(file)
-    // id++
+    const srcPath = convertFileSrc(filePath)
+    await playList.addSong(srcPath)
   }
 
   const handleDelete = async (idx: number) => {
