@@ -1,45 +1,74 @@
-import type PlayList from './PlayList'
+import { type ISong } from './PlayList'
+import { listen, emit, type Event } from '@tauri-apps/api/event'
+
+type Resolver = (value: ISong | number) => void
+
+const LENGTH_REQUEST_ID = -1
 
 class PlayQueue {
-  #playList?: PlayList
   #index: number = 0
+  // TODO: use cache
+  #pendingRequests = new Map<number, Resolver>()
 
-  constructor() {}
-
-  pos() {
-    if (!this.#playList) {
-      // [TODO] load func call
-      return
-    }
-    return this.#playList.getPlayList()[this.#index]
+  constructor() {
+    this.#bindListeners()
   }
 
-  prev() {
-    if (this.isFirst()) return this.pos()
+  async #bindListeners() {
+    // TODO: use command pattern
+    await listen('pos_response', (evt: Event<{ idx: number } & ISong>) => {
+      const { idx, id, source } = evt.payload
+
+      const resolver = this.#pendingRequests.get(idx)
+      if (resolver) {
+        resolver({ id, source })
+        this.#pendingRequests.delete(idx)
+      }
+    })
+
+    await listen('length_response', (evt: Event<{ length: number }>) => {
+      const { length } = evt.payload
+
+      const resolver = this.#pendingRequests.get(LENGTH_REQUEST_ID)
+      if (resolver) {
+        resolver(length)
+        this.#pendingRequests.delete(LENGTH_REQUEST_ID)
+      }
+    })
+  }
+
+  async pos(): Promise<ISong> {
+    emit('pos_request', { idx: this.#index })
+
+    const promise = new Promise((resolve) => {
+      this.#pendingRequests.set(this.#index, resolve)
+    })
+    return promise as Promise<ISong>
+  }
+
+  async prev() {
+    if (this.#index === 0) return this.pos()
     this.#index -= 1
     return this.pos()
   }
 
-  next() {
-    if (this.isLast()) return this.pos()
+  async next() {
+    const length = await this.getLength()
+    if (length - 1 === this.#index) {
+      return this.pos()
+    }
     this.#index += 1
     return this.pos()
   }
 
-  isFirst() {
-    return this.#index === 0
-  }
+  async getLength(): Promise<number> {
+    emit('length_request', { idx: LENGTH_REQUEST_ID })
 
-  isLast() {
-    if (!this.#playList) {
-      // [TODO] load func call
-      return
-    }
-    return this.#playList.length() - 1 === this.#index
+    const promise = new Promise((resolve) => {
+      this.#pendingRequests.set(this.#index, resolve)
+    })
+    return promise as Promise<number>
   }
-
-  // [TODO] impl
-  loadPlayList() {}
 }
 
 export default PlayQueue

@@ -24,8 +24,17 @@ class AudioPlayer {
     if (this.#ctx?.state === 'suspended') {
       await this.#ctx?.resume()
     }
-    this.#sourceElement?.play()
-    this.#playing = true
+
+    const song = await this.#playQueue.pos()
+
+    if (this.#sourceElement && this.#sourceElement?.src !== song.source) {
+      this.#sourceElement.src = song.source
+    }
+
+    if (this.#sourceElement) {
+      this.#sourceElement.play()
+      this.#playing = true
+    }
   }
 
   async pause() {

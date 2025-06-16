@@ -1,6 +1,7 @@
 import { Buffer } from 'buffer'
 import { type IStorage } from '@musicuon/storage'
 import { OpfsStorage, DbStorage } from '@musicuon/storage'
+import { listen, emit, type Event } from '@tauri-apps/api/event'
 
 interface PlayListOptions {
   storage?: 'DB' | 'OPFS'
@@ -25,6 +26,22 @@ class PlayList {
     }
 
     this.loadList()
+    this.#bindListeners()
+  }
+
+  async #bindListeners() {
+    // TODO: use command pattern
+    await listen('pos_request', (evt: Event<{ idx: number }>) => {
+      const { idx } = evt.payload
+
+      emit('pos_response', { idx, id: this.#list[idx].id, source: this.#list[idx].source })
+    })
+
+    await listen('length_request', (evt: Event<{ idx: number }>) => {
+      const { idx } = evt.payload
+
+      emit('length_response', { idx, length: this.#list.length })
+    })
   }
 
   async add(source: string) {
