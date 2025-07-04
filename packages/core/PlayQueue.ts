@@ -66,7 +66,7 @@ class PlayQueue {
     emit('length_request', { idx: LENGTH_REQUEST_ID })
 
     const promise = new Promise((resolve) => {
-      this.#pendingRequests.set(this.#index, resolve)
+      this.#pendingRequests.set(LENGTH_REQUEST_ID, resolve)
     })
     return promise as Promise<number>
   }

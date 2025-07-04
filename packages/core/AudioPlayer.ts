@@ -51,12 +51,12 @@ class AudioPlayer {
     this.#playing = false
   }
 
-  nextSong() {
-    return this.#playQueue.next()
+  async nextSong() {
+    await this.#playQueue.next()
   }
 
-  prevSong() {
-    return this.#playQueue.prev()
+  async prevSong() {
+    await this.#playQueue.prev()
   }
 
   volume(vol?: number) {

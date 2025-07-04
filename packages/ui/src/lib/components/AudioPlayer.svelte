@@ -48,12 +48,16 @@
     playing = false
   }
 
-  function handlePrev() {
-    console.log(audioPlayer.prevSong())
+  async function handlePrev() {
+    await hanldePause()
+    await audioPlayer.prevSong()
+    await handlePlay()
   }
 
-  function handleNext() {
-    console.log(audioPlayer.nextSong())
+  async function handleNext() {
+    await hanldePause()
+    await audioPlayer.nextSong()
+    await handlePlay()
   }
 
   function handleCurrentTime(evt: any) {
