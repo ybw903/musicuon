@@ -17,11 +17,11 @@ class PlayQueue {
   async #bindListeners() {
     // TODO: use command pattern
     await listen('pos_response', (evt: Event<{ idx: number } & ISong>) => {
-      const { idx, id, source } = evt.payload
+      const { idx, id, src, name } = evt.payload
 
       const resolver = this.#pendingRequests.get(idx)
       if (resolver) {
-        resolver({ id, source })
+        resolver({ id, src, name })
         this.#pendingRequests.delete(idx)
       }
     })

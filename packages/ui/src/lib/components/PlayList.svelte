@@ -17,8 +17,7 @@
 
     if (!filePath) return
 
-    const srcPath = convertFileSrc(filePath)
-    await playList.addSong(srcPath)
+    await playList.addSong(filePath)
   }
 
   const handleDelete = async (idx: number) => {
@@ -40,7 +39,7 @@
   <ul class="mt-2 flex flex-col">
     {#each $playList as song, i}
       <li class="flex cursor-pointer items-center border-b border-b-slate-200 py-1">
-        <span class="truncate text-sm font-medium"> {song.source}</span>
+        <span class="truncate text-sm font-medium"> {song.name}</span>
         <button
           class="min-w-fit rounded-lg px-2 py-2"
           on:click={() => handleDelete(i)}

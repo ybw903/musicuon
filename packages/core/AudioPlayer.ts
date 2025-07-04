@@ -27,8 +27,8 @@ class AudioPlayer {
 
     const song = await this.#playQueue.pos()
 
-    if (this.#sourceElement && this.#sourceElement?.src !== song.source) {
-      this.#sourceElement.src = song.source
+    if (this.#sourceElement && this.#sourceElement?.src !== song.src) {
+      this.#sourceElement.src = song.src
     }
 
     if (this.#sourceElement) {

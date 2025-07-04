@@ -2,13 +2,15 @@ import { Buffer } from 'buffer'
 import { type IStorage } from '@musicuon/storage'
 import { OpfsStorage, DbStorage } from '@musicuon/storage'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
+import { convertFileSrc } from '@tauri-apps/api/core'
 
 interface PlayListOptions {
   storage?: 'DB' | 'OPFS'
 }
 export interface ISong {
   id: string
-  source: string
+  src: string
+  name: string
 }
 
 class PlayList {
@@ -34,7 +36,12 @@ class PlayList {
     await listen('pos_request', (evt: Event<{ idx: number }>) => {
       const { idx } = evt.payload
 
-      emit('pos_response', { idx, id: this.#list[idx].id, source: this.#list[idx].source })
+      emit('pos_response', {
+        idx,
+        id: this.#list[idx].id,
+        src: this.#list[idx].src,
+        name: this.#list[idx].name
+      })
     })
 
     await listen('length_request', (evt: Event<{ idx: number }>) => {
@@ -44,14 +51,22 @@ class PlayList {
     })
   }
 
-  async add(source: string) {
+  async add(path: string) {
     const key = String(new Date().valueOf())
-    await this.#storage.set(key, Buffer.from(source))
-    this.#list.push({ id: key, source })
+
+    const src = convertFileSrc(path)
+    const name = path.split('/').pop()
+
+    if (!name) {
+      throw new Error('invalid path!')
+    }
+
+    const srcPath = await this.#storage.set(key, Buffer.from(JSON.stringify({ src, name })))
+    this.#list.push({ id: key, src, name })
   }
 
   async remove(idx: number) {
-    const { id, source } = this.#list[idx]
+    const { id } = this.#list[idx]
     await this.#storage.remove(id)
     this.#list.splice(idx, 1)
   }
@@ -75,7 +90,7 @@ class PlayList {
     for (const key of keys) {
       const buffer = await this.#storage.get(key)
       if (buffer) {
-        list.push({ id: key, source: buffer.toString() })
+        list.push({ id: key, ...(buffer.toJSON() as unknown as Omit<ISong, 'id'>) })
       }
     }
     this.#list = list
