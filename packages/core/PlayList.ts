@@ -38,9 +38,7 @@ class PlayList {
 
       emit('pos_response', {
         idx,
-        id: this.#list[idx].id,
-        src: this.#list[idx].src,
-        name: this.#list[idx].name
+        ...(this.#list[idx] ? this.#list[idx] : {})
       })
     })
 

@@ -27,6 +27,9 @@ class AudioPlayer {
 
     const song = await this.#playQueue.pos()
 
+    // TODO: check null only specific module
+    if (!song) return
+
     if (this.#sourceElement && this.#sourceElement?.src !== song.src) {
       this.#sourceElement.src = song.src
     }

@@ -1,8 +1,13 @@
 <script lang="ts">
-  import PlayIcon from '../../assets//polygon.svg'
-  import PauseIcon from '../../assets/pause.svg'
-  import AudioIcon from '../../assets/audio.svg'
-  import { AudioPlayer } from '@musicuon/core'
+  import {
+    PlayIcon,
+    PauseIcon,
+    Volume2Icon,
+    ChevronsLeftIcon,
+    ChevronsRightIcon
+  } from 'lucide-svelte'
+
+  import { AudioPlayer, type ISong } from '@musicuon/core'
   import dayjs from 'dayjs'
   import durationPlugin from 'dayjs/plugin/duration'
   import { onMount } from 'svelte'
@@ -16,13 +21,15 @@
   let volume = 1
   let currentTime = 0
   let duration = 0
+  let currentSong: ISong | null = null
 
   $: displayVolume = volume * 100
   $: displayDuration = dayjs.duration(duration, 's').format('mm:ss')
   $: displayCurrentTime = dayjs.duration(currentTime, 's').format('mm:ss')
 
-  onMount(() => {
+  onMount(async () => {
     audioPlayer = new AudioPlayer()
+    currentSong = await audioPlayer.getSong()
   })
 
   async function handlePlay() {
@@ -32,6 +39,7 @@
     }
 
     await audioPlayer.play()
+    currentSong = await audioPlayer.getSong()
     playing = true
   }
 
@@ -78,25 +86,32 @@
     on:loadedmetadata={handleLoadedMetaData}
     on:timeupdate={handleCurrentTime} />
   <div class="pl-[24px] pt-[16px]">
-    <p class="text-xl">노래 제목 뭐시기 저시기 어</p>
+    <p class="font-semibold">
+      {currentSong ? currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
+    </p>
     <div class="mt-[8px] flex items-center gap-2">
       <span class="flex gap-1">
         <button
-          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-          on:click={handlePrev}>
-          &lt;&lt;
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-gray-200"
+          on:click={handlePrev}
+          aria-label="이전 곡">
+          <ChevronsLeftIcon aria-hidden />
         </button>
         <button
           class="rounded-none border-0 bg-inherit p-0"
-          on:click={playing ? hanldePause : handlePlay}>
-          <img
-            src={playing ? PauseIcon : PlayIcon}
-            alt={playing ? '일시정지 아이콘' : '재생 아아콘'} />
+          on:click={playing ? hanldePause : handlePlay}
+          aria-label={playing ? '일시정지' : '재생'}>
+          {#if playing}
+            <PauseIcon aria-hidden />
+          {:else}
+            <PlayIcon aria-hidden />
+          {/if}
         </button>
         <button
-          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-          on:click={handleNext}>
-          &gt;&gt;
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-gray-200"
+          on:click={handleNext}
+          aria-label="다음 곡">
+          <ChevronsRightIcon aria-hidden />
         </button>
       </span>
 
@@ -105,7 +120,7 @@
       <p>{displayDuration}</p>
     </div>
     <div class="mt-[8px] flex items-center gap-1">
-      <img src={AudioIcon} alt="오디오 아이콘" />
+      <Volume2Icon />
       <input type="range" value={displayVolume} max="200" on:change={handleVolume} />
     </div>
   </div>

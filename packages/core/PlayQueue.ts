@@ -1,7 +1,7 @@
 import { type ISong } from './PlayList'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
 
-type Resolver = (value: ISong | number) => void
+type Resolver = (value: ISong | null | number) => void
 
 const LENGTH_REQUEST_ID = -1
 
@@ -16,12 +16,13 @@ class PlayQueue {
 
   async #bindListeners() {
     // TODO: use command pattern
-    await listen('pos_response', (evt: Event<{ idx: number } & ISong>) => {
+    await listen('pos_response', (evt: Event<{ idx: number } & Partial<ISong>>) => {
       const { idx, id, src, name } = evt.payload
 
       const resolver = this.#pendingRequests.get(idx)
       if (resolver) {
-        resolver({ id, src, name })
+        const payload = id && src && name ? { id, src, name } : null
+        resolver(payload)
         this.#pendingRequests.delete(idx)
       }
     })
@@ -37,13 +38,13 @@ class PlayQueue {
     })
   }
 
-  async pos(): Promise<ISong> {
+  async pos(): Promise<ISong | null> {
     emit('pos_request', { idx: this.#index })
 
     const promise = new Promise((resolve) => {
       this.#pendingRequests.set(this.#index, resolve)
     })
-    return promise as Promise<ISong>
+    return promise as Promise<ISong | null>
   }
 
   async prev() {
