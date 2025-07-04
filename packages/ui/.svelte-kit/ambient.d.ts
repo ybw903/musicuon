@@ -34,6 +34,7 @@ declare module '$env/static/private' {
 	export const TERM: string;
 	export const npm_package_devDependencies_vite: string;
 	export const npm_package_dependencies__musicuon_core: string;
+	export const npm_package_dependencies_lucide_svelte: string;
 	export const npm_package_private: string;
 	export const npm_package_exports___svelte: string;
 	export const npm_package_peerDependencies_tailwindcss: string;
@@ -124,6 +125,7 @@ declare module '$env/dynamic/private' {
 		TERM: string;
 		npm_package_devDependencies_vite: string;
 		npm_package_dependencies__musicuon_core: string;
+		npm_package_dependencies_lucide_svelte: string;
 		npm_package_private: string;
 		npm_package_exports___svelte: string;
 		npm_package_peerDependencies_tailwindcss: string;

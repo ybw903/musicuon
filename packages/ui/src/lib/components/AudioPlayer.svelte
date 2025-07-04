@@ -71,7 +71,7 @@
   }
 </script>
 
-<div class="h-[120px] w-[348px] rounded-2xl bg-neutral-400">
+<div class="h-[120px] w-full bg-slate-400">
   <audio
     src="/audio/sample.mp3"
     bind:this={audioRef}

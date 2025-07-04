@@ -13,7 +13,7 @@
     "windows": [
       {
         "title": "musicuon",
-        "width": 800,
+        "width": 400,
         "height": 600,
         "resizable": true,
         "fullscreen": false
@@ -22,9 +22,9 @@
         "title": "musicuon",
         "label": "player",
         "url": "http://localhost:5173",
-        "width": 800,
-        "height": 600,
-        "resizable": true,
+        "width": 360,
+        "height": 148,
+        "resizable": false,
         "fullscreen": false
       }
     ],
