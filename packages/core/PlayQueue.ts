@@ -56,6 +56,24 @@ class PlayQueue {
     })
   }
 
+  async listenRemovedPlayList(onRemove: (idx: number, currentPlaying: boolean) => Promise<void>) {
+    await listen('removed_play_list', async (evt: Event<{ idx: number }>) => {
+      const { idx } = evt.payload
+
+      const currentPlaying = idx === this.#index
+      const length = await this.getLength()
+
+      if (currentPlaying) {
+        await this.prev()
+      }
+      if (currentPlaying && idx === 0 && length !== 0) {
+        await this.next()
+      }
+
+      onRemove(idx, currentPlaying)
+    })
+  }
+
   async pos(): Promise<ISong | null> {
     emit('pos_request', { idx: this.#index })
 
@@ -82,7 +100,7 @@ class PlayQueue {
 
   async next() {
     const length = await this.getLength()
-    if (length - 1 === this.#index) {
+    if (length <= this.#index + 1) {
       return this.pos()
     }
     this.#index += 1

@@ -27,6 +27,10 @@ class AudioPlayer {
     this.#playQueue.listenSelectedPlayList(onSelect)
   }
 
+  async listenRemovedPlayList(onRemove: (idx: number, currentPlaying: boolean) => Promise<void>) {
+    this.#playQueue.listenRemovedPlayList(onRemove)
+  }
+
   async play() {
     if (!this.#ctx) {
       this.#initAudioContext()

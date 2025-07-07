@@ -1,10 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { playList } from '../../store'
   import { open } from '@tauri-apps/plugin-dialog'
-  import { PlusIcon } from 'lucide-svelte'
-  import { CircleXIcon } from 'lucide-svelte'
-  import { convertFileSrc } from '@tauri-apps/api/core'
+  import { PlusIcon, CircleXIcon } from 'lucide-svelte'
+  import { playList } from '../../store'
 
   export let env: 'web' | 'webview'
 

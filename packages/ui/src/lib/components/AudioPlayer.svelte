@@ -35,6 +35,18 @@
       currentSong = await audioPlayer.getSong()
       await handlePlay()
     })
+    audioPlayer.listenRemovedPlayList(async (idx, currentPlaying) => {
+      if (!currentPlaying) return
+
+      await handlePause()
+      currentTime = 0
+      duration = 0
+
+      currentSong = await audioPlayer.getSong()
+      if (!currentSong) return
+
+      await handlePlay()
+    })
     currentSong = await audioPlayer.getSong()
   })
 

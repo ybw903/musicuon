@@ -89,6 +89,7 @@ class PlayList {
     const { id } = this.#list[idx]
     await this.#storage.remove(id)
     this.#list.splice(idx, 1)
+    emit('removed_play_list', { idx })
   }
 
   selectSong(idx: number) {
