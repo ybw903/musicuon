@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer'
+import { parseWebStream } from 'music-metadata'
 import { type IStorage } from '@musicuon/storage'
 import { OpfsStorage, DbStorage } from '@musicuon/storage'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
@@ -11,6 +12,10 @@ export interface ISong {
   id: string
   src: string
   name: string
+  title: string
+  artist: string
+  album: string
+  year: number
 }
 
 class PlayList {
@@ -53,14 +58,27 @@ class PlayList {
     const key = String(new Date().valueOf())
 
     const src = convertFileSrc(path)
+    const response = await fetch(src)
+    const metadata = await parseWebStream(response.body)
+
     const name = path.split('/').pop()
 
     if (!name) {
       throw new Error('invalid path!')
     }
 
-    const srcPath = await this.#storage.set(key, Buffer.from(JSON.stringify({ src, name })))
-    this.#list.push({ id: key, src, name })
+    const song = {
+      id: key,
+      src,
+      name,
+      title: metadata.common.title || '',
+      artist: metadata.common.artist || '',
+      album: metadata.common.album || '',
+      year: metadata.common.year || 0
+    }
+
+    await this.#storage.set(key, Buffer.from(JSON.stringify(song)))
+    this.#list.push(song)
   }
 
   async remove(idx: number) {
