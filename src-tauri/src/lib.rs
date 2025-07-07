@@ -1,4 +1,16 @@
 use tauri_plugin_sql::{Migration, MigrationKind};
+use tauri::{AppHandle};
+
+#[tauri::command]
+async fn open_play_list_window(app: AppHandle) {
+    // TODO: add env condition
+    let _new_window = tauri::WebviewWindowBuilder::new(&app, "play-list", tauri::WebviewUrl::App("http://localhost:5173/play-list/index.html".into()))
+        .title("play-list | musicuon")
+        .inner_size(400.0, 600.0)
+        .build()
+        .unwrap();
+}
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -28,6 +40,7 @@ pub fn run() {
       }
       Ok(())
     })
+    .invoke_handler(tauri::generate_handler![open_play_list_window])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

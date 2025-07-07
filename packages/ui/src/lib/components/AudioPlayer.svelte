@@ -4,7 +4,8 @@
     PauseIcon,
     Volume2Icon,
     ChevronsLeftIcon,
-    ChevronsRightIcon
+    ChevronsRightIcon,
+    ListIcon
   } from 'lucide-svelte'
 
   import { AudioPlayer, type ISong } from '@musicuon/core'
@@ -86,6 +87,10 @@
     volume = evt.target.value / 100
     audioPlayer.volume(evt.target.value / 100)
   }
+
+  function handleOpenPlayList() {
+    audioPlayer.openPlayListWindow()
+  }
 </script>
 
 <div class="h-[120px] w-full bg-slate-400">
@@ -94,10 +99,16 @@
     bind:this={audioRef}
     on:loadedmetadata={handleLoadedMetaData}
     on:timeupdate={handleCurrentTime} />
-  <div class="pl-[24px] pt-[16px]">
-    <p class="font-semibold">
-      {currentSong ? currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
-    </p>
+  <div class="px-[24px] pt-[16px]">
+    <div class="flex items-center justify-between">
+      <p class="font-semibold">
+        {currentSong ? currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
+      </p>
+      <button on:click={handleOpenPlayList}>
+        <ListIcon />
+      </button>
+    </div>
+
     <div class="mt-[8px] flex items-center gap-2">
       <span class="flex gap-1">
         <button

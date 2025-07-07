@@ -1,3 +1,4 @@
+import { invoke } from '@tauri-apps/api/core'
 import PlayQueue from './PlayQueue'
 import type { ISong } from './PlayList'
 
@@ -16,6 +17,10 @@ class AudioPlayer {
 
   constructor() {
     this.#playQueue = new PlayQueue()
+  }
+
+  openPlayListWindow() {
+    invoke('open_play_list_window')
   }
 
   async listenSelectedPlayList(onSelect: (song: ISong) => Promise<void>) {
