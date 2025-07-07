@@ -79,12 +79,20 @@ class PlayList {
 
     await this.#storage.set(key, Buffer.from(JSON.stringify(song)))
     this.#list.push(song)
+
+    if (this.#list.length === 1) {
+      this.selectSong(0)
+    }
   }
 
   async remove(idx: number) {
     const { id } = this.#list[idx]
     await this.#storage.remove(id)
     this.#list.splice(idx, 1)
+  }
+
+  selectSong(idx: number) {
+    emit('selected_play_list', { idx, song: this.#list[idx] })
   }
 
   clear() {

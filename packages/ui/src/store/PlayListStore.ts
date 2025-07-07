@@ -15,6 +15,10 @@ function createPlayListStore() {
     set(playListManager.getPlayList())
   }
 
+  const selectSong = async (index: number) => {
+    playListManager.selectSong(index)
+  }
+
   const init = async (env: 'web' | 'webview') => {
     playListManager = new PlayList({ storage: env === 'web' ? 'OPFS' : 'DB' })
     await playListManager.loadList()
@@ -25,7 +29,8 @@ function createPlayListStore() {
     subscribe,
     init,
     addSong,
-    removeSong
+    removeSong,
+    selectSong
   }
 }
 

@@ -24,6 +24,10 @@
     await playList.removeSong(idx)
   }
 
+  const handleSelect = (idx: number) => {
+    playList.selectSong(idx)
+  }
+
   onMount(async () => {
     playList.init(env)
   })
@@ -39,7 +43,10 @@
   <ul class="mt-2 flex flex-col">
     {#each $playList as song, i}
       <li class="flex cursor-pointer items-center border-b border-b-slate-200 py-1">
-        <span class="truncate text-sm font-medium"> {song.name}</span>
+        <button on:click={() => handleSelect(i)} aria-label={`${i}번째 노래 선택`}>
+          <span class="truncate text-sm font-medium"> {song.name}</span>
+        </button>
+
         <button
           class="min-w-fit rounded-lg px-2 py-2"
           on:click={() => handleDelete(i)}

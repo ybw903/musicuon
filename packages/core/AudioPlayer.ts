@@ -1,4 +1,5 @@
 import PlayQueue from './PlayQueue'
+import type { ISong } from './PlayList'
 
 class AudioPlayer {
   #volume: number = 1
@@ -15,6 +16,10 @@ class AudioPlayer {
 
   constructor() {
     this.#playQueue = new PlayQueue()
+  }
+
+  async listenSelectedPlayList(onSelect: (song: ISong) => Promise<void>) {
+    this.#playQueue.listenSelectedPlayList(onSelect)
   }
 
   async play() {

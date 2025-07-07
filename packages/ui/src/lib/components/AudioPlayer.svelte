@@ -29,6 +29,11 @@
 
   onMount(async () => {
     audioPlayer = new AudioPlayer()
+    audioPlayer.listenSelectedPlayList(async (song) => {
+      await handlePause()
+      currentSong = await audioPlayer.getSong()
+      await handlePlay()
+    })
     currentSong = await audioPlayer.getSong()
   })
 

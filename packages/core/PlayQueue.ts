@@ -48,6 +48,14 @@ class PlayQueue {
     })
   }
 
+  async listenSelectedPlayList(onSelect: (song: ISong) => Promise<void>) {
+    await listen('selected_play_list', async (evt: Event<{ idx: number } & ISong>) => {
+      const { idx, ...song } = evt.payload
+      await this.selectPos(idx)
+      onSelect(song)
+    })
+  }
+
   async pos(): Promise<ISong | null> {
     emit('pos_request', { idx: this.#index })
 
@@ -55,6 +63,15 @@ class PlayQueue {
       this.#pendingRequests.set(this.#index, resolve)
     })
     return promise as Promise<ISong | null>
+  }
+
+  async selectPos(pos: number): Promise<ISong | null> {
+    const length = await this.getLength()
+
+    if (pos >= length || pos < 0) throw new Error('invalid playlist position')
+
+    this.#index = pos
+    return this.pos()
   }
 
   async prev() {
