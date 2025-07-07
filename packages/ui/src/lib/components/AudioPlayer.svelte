@@ -43,19 +43,19 @@
     playing = true
   }
 
-  async function hanldePause() {
+  async function handlePause() {
     await audioPlayer.pause()
     playing = false
   }
 
   async function handlePrev() {
-    await hanldePause()
+    await handlePause()
     await audioPlayer.prevSong()
     await handlePlay()
   }
 
   async function handleNext() {
-    await hanldePause()
+    await handlePause()
     await audioPlayer.nextSong()
     await handlePlay()
   }
@@ -70,7 +70,7 @@
 
   // [TODO] dispatch event through debounced?...
   function handlePlayTime(evt: any) {
-    hanldePause().then(() => {
+    handlePause().then(() => {
       currentTime = evt.target.value
       audioPlayer.playtime(evt.target.value)
       handlePlay()
@@ -103,7 +103,7 @@
         </button>
         <button
           class="rounded-none border-0 bg-inherit p-0"
-          on:click={playing ? hanldePause : handlePlay}
+          on:click={playing ? handlePause : handlePlay}
           aria-label={playing ? '일시정지' : '재생'}>
           {#if playing}
             <PauseIcon aria-hidden />
