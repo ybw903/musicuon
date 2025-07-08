@@ -1,11 +1,13 @@
 import { invoke } from '@tauri-apps/api/core'
 import PlayQueue from './PlayQueue'
 import type { ISong } from './PlayList'
+import AudioVisualizer from './AudioVisualizer'
 
 class AudioPlayer {
   #volume: number = 1
   #ctx?: AudioContext
   #gainNode?: GainNode
+  #analyserNode?: AnalyserNode
   #source?: MediaElementAudioSourceNode
   #sourceElement?: HTMLAudioElement
   #playing: boolean = false
@@ -14,9 +16,15 @@ class AudioPlayer {
   #duration: number = 0
 
   #playQueue: PlayQueue
+  #audioVisualizer?: AudioVisualizer
+  #visualCanvasElement?: HTMLCanvasElement
 
-  constructor() {
+  constructor({ options }: { options?: { visualCanvasElement?: HTMLCanvasElement } } = {}) {
     this.#playQueue = new PlayQueue()
+
+    if (options?.visualCanvasElement) {
+      this.#visualCanvasElement = options?.visualCanvasElement
+    }
   }
 
   openPlayListWindow() {
@@ -52,6 +60,10 @@ class AudioPlayer {
       this.#sourceElement.play()
       this.#playing = true
     }
+
+    if (this.#visualCanvasElement && this.#audioVisualizer) {
+      this.#audioVisualizer.startDraw()
+    }
   }
 
   async pause() {
@@ -61,7 +73,9 @@ class AudioPlayer {
     if (this.#ctx?.state === 'running') {
       await this.#ctx?.suspend()
     }
+
     this.#sourceElement?.pause()
+    this.#audioVisualizer?.stopDraw()
     this.#playing = false
   }
 
@@ -128,6 +142,10 @@ class AudioPlayer {
       this.#source.disconnect(this.#gainNode)
     }
 
+    if (this.#source && this.#analyserNode) {
+      this.#source.disconnect(this.#analyserNode)
+    }
+
     this.#sourceElement = source
     this.#source = this.#ctx?.createMediaElementSource(source)
 
@@ -137,6 +155,11 @@ class AudioPlayer {
     if (this.#gainNode) {
       this.#source?.connect(this.#gainNode)
     }
+
+    if (this.#analyserNode) {
+      this.#source?.connect(this.#analyserNode)
+    }
+
     this.#initSource = true
   }
 
@@ -152,6 +175,11 @@ class AudioPlayer {
       this.#gainNode = this.#ctx.createGain()
     } else if (this.#ctx?.createGainNode) {
       this.#gainNode = this.#ctx.createGainNode()
+    }
+
+    if (this.#visualCanvasElement) {
+      this.#analyserNode = this.#ctx?.createAnalyser()
+      this.#audioVisualizer = new AudioVisualizer(this.#visualCanvasElement, this.#analyserNode)
     }
 
     if (this.#gainNode) {

@@ -15,6 +15,7 @@
 
   dayjs.extend(durationPlugin)
 
+  export let visualCanvasRef: HTMLCanvasElement
   let audioRef: HTMLAudioElement
   let audioPlayer: AudioPlayer
 
@@ -29,7 +30,10 @@
   $: displayCurrentTime = dayjs.duration(currentTime, 's').format('mm:ss')
 
   onMount(async () => {
-    audioPlayer = new AudioPlayer()
+    // TODO: strict type check
+    audioPlayer = new AudioPlayer(
+      visualCanvasRef ? { options: { visualCanvasElement: visualCanvasRef } } : {}
+    )
     audioPlayer.listenSelectedPlayList(async (song) => {
       await handlePause()
       currentSong = await audioPlayer.getSong()
