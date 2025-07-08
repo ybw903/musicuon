@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { open } from '@tauri-apps/plugin-dialog'
-  import { PlusIcon, CircleXIcon } from 'lucide-svelte'
+  import { PlusIcon, CircleXIcon, InfoIcon } from 'lucide-svelte'
   import { playList } from '../../store'
+  import type { ISong } from '@musicuon/core'
 
   export let env: 'web' | 'webview'
+  export let onSelectShowSongDetail: (song: ISong) => void
 
   const handleAdd = async () => {
     let filePath
@@ -20,6 +22,10 @@
 
   const handleDelete = async (idx: number) => {
     await playList.removeSong(idx)
+  }
+
+  const handleSelectShowSongDetail = (song: ISong) => {
+    onSelectShowSongDetail(song)
   }
 
   const handleSelect = (idx: number) => {
@@ -46,9 +52,12 @@
         </button>
 
         <button
-          class="min-w-fit rounded-lg px-2 py-2"
-          on:click={() => handleDelete(i)}
-          aria-label="삭제">
+          class="min-w-fit rounded-lg p-1"
+          on:click={() => handleSelectShowSongDetail(song)}
+          aria-label="상세 정보">
+          <InfoIcon aria-hidden={true} size={16} color={'#4b5563'} />
+        </button>
+        <button class="min-w-fit rounded-lg p-1" on:click={() => handleDelete(i)} aria-label="삭제">
           <CircleXIcon aria-hidden={true} size={16} color={'#dc2626'} />
         </button>
       </li>
