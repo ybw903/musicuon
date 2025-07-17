@@ -37,7 +37,7 @@
   })
 </script>
 
-<div class="w-100 min-h-screen bg-slate-400 p-5">
+<div class="w-100 min-h-screen bg-gray-900 p-5">
   <div>
     <button class="flex items-center rounded-lg bg-white px-3 py-2" on:click={handleAdd}>
       <span class="mr-1"><PlusIcon size={16} /></span>
@@ -48,14 +48,14 @@
     {#each $playList as song, i}
       <li class="flex cursor-pointer items-center border-b border-b-slate-200 py-1">
         <button on:click={() => handleSelect(i)} aria-label={`${i}번째 노래 선택`}>
-          <span class="truncate text-sm font-medium"> {song.name}</span>
+          <span class="truncate text-sm font-medium text-white"> {song.name}</span>
         </button>
 
         <button
           class="min-w-fit rounded-lg p-1"
           on:click={() => handleSelectShowSongDetail(song)}
           aria-label="상세 정보">
-          <InfoIcon aria-hidden={true} size={16} color={'#4b5563'} />
+          <InfoIcon aria-hidden={true} size={16} color={'#fff'} />
         </button>
         <button class="min-w-fit rounded-lg p-1" on:click={() => handleDelete(i)} aria-label="삭제">
           <CircleXIcon aria-hidden={true} size={16} color={'#dc2626'} />

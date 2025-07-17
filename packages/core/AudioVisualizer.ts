@@ -18,7 +18,7 @@ class AudioVisualizer {
   draw() {
     if (this.#shouldStopDraw) {
       // TODO: use theme color
-      this.#canvasCtx.fillStyle = '#cbd5e1'
+      this.#canvasCtx.fillStyle = '#1f2937'
       this.#canvasCtx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
       return
     }
@@ -29,11 +29,11 @@ class AudioVisualizer {
     const freq = new Uint8Array(bufferLength)
     this.#analyserNode.getByteFrequencyData(freq)
 
-    this.#canvasCtx.fillStyle = '#cbd5e1'
+    this.#canvasCtx.fillStyle = '#1f2937'
     this.#canvasCtx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
 
     this.#canvasCtx.lineWidth = 2
-    this.#canvasCtx.strokeStyle = '#222'
+    this.#canvasCtx.strokeStyle = '#fff'
     this.#canvasCtx.beginPath()
 
     const sliceWidth = this.#canvas.width / bufferLength

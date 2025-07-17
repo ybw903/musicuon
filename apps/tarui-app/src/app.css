@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+[type='range'] {
+  @apply m-0 h-4 w-full cursor-pointer appearance-none bg-transparent p-0;
+}
+
+[type='range']::-webkit-slider-thumb {
+  /* Webkit 기반 브라우저 */
+  border-radius: 50%;
+  margin-top: -0.3rem;
+  @apply h-4 w-4 appearance-none border-none bg-white;
+}
+
+/* track */
+[type='range']::-webkit-slider-runnable-track {
+  /* Webkit 기반 브라우저 */
+  @apply h-1 w-full cursor-pointer rounded-md bg-white;
+}

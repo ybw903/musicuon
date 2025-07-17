@@ -109,7 +109,7 @@
   }
 </script>
 
-<div class="h-[120px] w-full bg-slate-400">
+<div class="h-[120px] w-full bg-gray-900">
   <audio
     src="/audio/sample.mp3"
     bind:this={audioRef}
@@ -117,24 +117,24 @@
     on:timeupdate={handleCurrentTime} />
   <div class="px-[24px] pt-[16px]">
     <div class="flex items-center justify-between">
-      <p class="font-semibold">
+      <p class="text-white">
         {currentSong ? currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
       </p>
       <button on:click={handleOpenPlayList}>
-        <ListIcon />
+        <ListIcon color={'#fff'} />
       </button>
     </div>
 
     <div class="mt-[8px] flex items-center gap-2">
       <span class="flex gap-1">
         <button
-          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-gray-200"
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
           on:click={handlePrev}
           aria-label="이전 곡">
           <ChevronsLeftIcon aria-hidden />
         </button>
         <button
-          class="rounded-none border-0 bg-inherit p-0"
+          class="rounded-none border-0 bg-inherit p-0 text-white"
           on:click={playing ? handlePause : handlePlay}
           aria-label={playing ? '일시정지' : '재생'}>
           {#if playing}
@@ -144,19 +144,24 @@
           {/if}
         </button>
         <button
-          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-gray-200"
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
           on:click={handleNext}
           aria-label="다음 곡">
           <ChevronsRightIcon aria-hidden />
         </button>
       </span>
 
-      <p>{displayCurrentTime}</p>
-      <input type="range" value={currentTime} max={duration} on:change={handlePlayTime} />
-      <p>{displayDuration}</p>
+      <p class="text-sm text-white">{displayCurrentTime}</p>
+      <input
+        class="bg-white"
+        type="range"
+        value={currentTime}
+        max={duration}
+        on:change={handlePlayTime} />
+      <p class="text-sm text-white">{displayDuration}</p>
     </div>
     <div class="mt-[8px] flex items-center gap-1">
-      <Volume2Icon />
+      <Volume2Icon color={'#fff'} />
       <input type="range" value={displayVolume} max="200" on:change={handleVolume} />
     </div>
   </div>
