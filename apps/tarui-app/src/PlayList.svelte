@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PlayList, SongDetailModal } from '@musicuon/ui'
+  import { PlayListNavigation, PlayListHeader, PlayList, SongDetailModal } from '@musicuon/ui'
   import { resolveEnv } from './utils/envUtils'
 
   let env = resolveEnv()
@@ -14,8 +14,16 @@
   }
 </script>
 
-<main>
-  <PlayList {env} onSelectShowSongDetail={handleSelectShowSongDetail} />
+<main class="min-h-screen w-full bg-gray-900">
+  <PlayListHeader />
+  <div class="flex w-full flex-col gap-1 px-6 py-5 md:flex-row">
+    <aside class="h-full w-full p-4 md:w-[320px]">
+      <PlayListNavigation />
+    </aside>
+    <section class="h-full w-full md:w-[calc(100%-320px)]">
+      <PlayList {env} onSelectShowSongDetail={handleSelectShowSongDetail} />
+    </section>
+  </div>
   <SongDetailModal song={selectedShowSongDetail} onCloseModal={onCloseSongDetailModal} />
 </main>
 

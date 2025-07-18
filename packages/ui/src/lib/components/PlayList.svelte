@@ -37,13 +37,14 @@
   })
 </script>
 
-<div class="w-100 min-h-screen bg-gray-900 p-5">
-  <div>
+<div class="h-full w-full p-4">
+  <header class="flex items-center justify-between">
+    <h2 class="text-3xl font-bold text-white">Your Playlist</h2>
     <button class="flex items-center rounded-lg bg-white px-3 py-2" on:click={handleAdd}>
       <span class="mr-1"><PlusIcon size={16} /></span>
       <span class="font-bold">추가</span>
     </button>
-  </div>
+  </header>
   <ul class="mt-2 flex flex-col">
     {#each $playList as song, i}
       <li class="flex cursor-pointer items-center border-b border-b-slate-200 py-1">

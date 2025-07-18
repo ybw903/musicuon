@@ -9,7 +9,7 @@ async fn open_play_list_window(app: AppHandle) {
         // TODO: add env condition
         let _new_window = tauri::WebviewWindowBuilder::new(&app, "play-list", tauri::WebviewUrl::App("http://localhost:5173/play-list/index.html".into()))
             .title("play-list | musicuon")
-            .inner_size(400.0, 600.0)
+            .inner_size(1280.0, 940.0)
             .build()
             .unwrap();
      };
