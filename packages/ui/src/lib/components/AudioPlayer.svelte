@@ -1,17 +1,13 @@
 <script lang="ts">
-  import {
-    PlayIcon,
-    PauseIcon,
-    Volume2Icon,
-    ChevronsLeftIcon,
-    ChevronsRightIcon,
-    ListIcon
-  } from 'lucide-svelte'
+  import { PlayIcon, PauseIcon, Volume2Icon, ListIcon } from 'lucide-svelte'
+  import musicuonLogo from '../../assets/musicuon_logo.png'
 
   import { AudioPlayer, type ISong } from '@musicuon/core'
   import dayjs from 'dayjs'
   import durationPlugin from 'dayjs/plugin/duration'
   import { onMount } from 'svelte'
+  import PrevSongIcon from './icons/PrevSongIcon.svelte'
+  import NextSongIcon from './icons/NextSongIcon.svelte'
 
   dayjs.extend(durationPlugin)
 
@@ -109,7 +105,7 @@
   }
 </script>
 
-<div class="h-[120px] w-full bg-gray-900">
+<div class="h-full w-full bg-gray-900">
   <audio
     src="/audio/sample.mp3"
     bind:this={audioRef}
@@ -124,43 +120,55 @@
         <ListIcon color={'#fff'} />
       </button>
     </div>
-
-    <div class="mt-[8px] flex items-center gap-2">
-      <span class="flex gap-1">
-        <button
-          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-          on:click={handlePrev}
-          aria-label="이전 곡">
-          <ChevronsLeftIcon aria-hidden />
-        </button>
-        <button
-          class="rounded-none border-0 bg-inherit p-0 text-white"
-          on:click={playing ? handlePause : handlePlay}
-          aria-label={playing ? '일시정지' : '재생'}>
-          {#if playing}
-            <PauseIcon aria-hidden />
-          {:else}
-            <PlayIcon aria-hidden />
-          {/if}
-        </button>
-        <button
-          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-          on:click={handleNext}
-          aria-label="다음 곡">
-          <ChevronsRightIcon aria-hidden />
-        </button>
-      </span>
-
-      <p class="text-sm text-white">{displayCurrentTime}</p>
+    <div class="mt-4 flex items-center justify-center">
+      <div class="flex h-32 w-32 items-center justify-center rounded-xl bg-gray-500">
+        <img
+          class="drop-shadow-lg"
+          src={musicuonLogo}
+          width={80}
+          height={80}
+          alt="기본 앨범 커버 이미지" />
+      </div>
+    </div>
+    <div class="mt-4">
       <input
         class="bg-white"
         type="range"
         value={currentTime}
         max={duration}
         on:change={handlePlayTime} />
-      <p class="text-sm text-white">{displayDuration}</p>
+      <div class="flex justify-between">
+        <p class="text-sm text-white">{displayCurrentTime}</p>
+        <p class="text-sm text-white">{displayDuration}</p>
+      </div>
     </div>
-    <div class="mt-[8px] flex items-center gap-1">
+    <div class="flex items-center justify-center gap-6">
+      <button
+        class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
+        on:click={handlePrev}
+        aria-label="이전 곡">
+        <PrevSongIcon />
+      </button>
+      <button
+        class="rounded-none border-0 bg-inherit p-0 text-black"
+        on:click={playing ? handlePause : handlePlay}
+        aria-label={playing ? '일시정지' : '재생'}>
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-400">
+          {#if playing}
+            <PauseIcon aria-hidden size={28} fill={'#111827'} />
+          {:else}
+            <PlayIcon aria-hidden size={28} fill={'#111827'} />
+          {/if}
+        </div>
+      </button>
+      <button
+        class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
+        on:click={handleNext}
+        aria-label="다음 곡">
+        <NextSongIcon />
+      </button>
+    </div>
+    <div class="mt-3 flex items-center gap-1">
       <Volume2Icon color={'#fff'} />
       <input type="range" value={displayVolume} max="200" on:change={handleVolume} />
     </div>
