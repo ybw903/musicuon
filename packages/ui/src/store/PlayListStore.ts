@@ -6,21 +6,25 @@ function createPlayListStore() {
   const { subscribe, set } = writable<ISong[]>([])
 
   const addSong = async (song: string) => {
+    if (!playListManager) throw new Error('Store needs to be initialized!')
     await playListManager.add(song)
-    set(playListManager.getPlayList())
   }
 
   const removeSong = async (index: number) => {
+    if (!playListManager) throw new Error('Store needs to be initialized!')
     await playListManager.remove(index)
-    set(playListManager.getPlayList())
   }
 
   const selectSong = async (index: number) => {
+    if (!playListManager) throw new Error('Store needs to be initialized!')
     playListManager.selectSong(index)
   }
 
   const init = async (env: 'web' | 'webview') => {
-    playListManager = new PlayList({ storage: env === 'web' ? 'OPFS' : 'DB' })
+    playListManager = new PlayList({
+      storage: env === 'web' ? 'OPFS' : 'DB',
+      onUpdateList: (list) => set(list)
+    })
     await playListManager.loadList()
     set(playListManager.getPlayList())
   }

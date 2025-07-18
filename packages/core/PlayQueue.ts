@@ -17,7 +17,7 @@ class PlayQueue {
   async #bindListeners() {
     // TODO: use command pattern
     await listen('pos_response', (evt: Event<{ idx: number } & Partial<ISong>>) => {
-      const { idx, id, src, name, title, artist, album, year } = evt.payload
+      const { idx, id, src, path, name, title, artist, album, year } = evt.payload
 
       const resolver = this.#pendingRequests.get(idx)
       if (resolver) {
@@ -26,11 +26,12 @@ class PlayQueue {
           id &&
           src &&
           name &&
+          path &&
           typeof title !== 'undefined' &&
           typeof artist !== 'undefined' &&
           typeof album !== 'undefined' &&
           typeof year !== 'undefined'
-            ? { id, src, name, title, artist, album, year }
+            ? { id, src, path, name, title, artist, album, year }
             : null
         resolver(payload)
         this.#pendingRequests.delete(idx)

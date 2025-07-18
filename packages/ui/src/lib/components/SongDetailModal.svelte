@@ -1,12 +1,30 @@
 <script lang="ts">
   import type { ISong } from '@musicuon/core'
+  import { invoke } from '@tauri-apps/api/core'
   import Modal from './Modal.svelte'
 
   export let song: ISong
   export let onCloseModal: () => void
 
+  type SongFormKeys = 'title' | 'album' | 'artist' | 'year'
+  let songForm: Pick<ISong, SongFormKeys> = {
+    title: song?.title ?? '',
+    album: song?.album ?? '',
+    artist: song?.artist ?? '',
+    year: song?.year ?? 0
+  }
+
   $: if (song) {
     showModal = true
+    songForm.album = song.album
+    songForm.artist = song.artist
+    songForm.title = song.title
+    songForm.year = song.year
+  } else {
+    songForm.album = ''
+    songForm.artist = ''
+    songForm.title = ''
+    songForm.year = 0
   }
 
   let showModal = false
@@ -15,6 +33,28 @@
     if (open === false) {
       onCloseModal()
     }
+  }
+
+  function handleEditSongForm(
+    evt: Event & { currentTarget: EventTarget & HTMLInputElement },
+    key: SongFormKeys
+  ) {
+    if (key === 'year') {
+      // TODO: check different dom value from state value
+      if (/\D/.test(evt.currentTarget.value)) return
+      songForm[key] = Number(evt.currentTarget.value)
+    } else {
+      songForm[key] = evt.currentTarget.value
+    }
+  }
+
+  function handleEditSongDetail() {
+    invoke('write_metadata', {
+      song: {
+        ...song,
+        ...songForm
+      }
+    }).then(() => onOpenModal(false))
   }
 </script>
 
@@ -27,27 +67,39 @@
   <div class="mt-4 flex flex-col gap-2" slot="content">
     <div class="flex items-center justify-between gap-4">
       <p class="w-24 text-xs font-medium text-white">노래 제목</p>
-      <p class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white">
-        {song?.title}
-      </p>
+      <input
+        type="text"
+        class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white"
+        value={songForm.title}
+        on:input={(evt) => handleEditSongForm(evt, 'title')} />
     </div>
     <div class="flex items-center justify-between gap-4">
       <p class="w-24 text-xs font-medium text-white">앨범 이름</p>
-      <p class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white">
-        {song?.album}
-      </p>
+      <input
+        type="text"
+        class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white"
+        on:input={(evt) => handleEditSongForm(evt, 'album')}
+        value={songForm.album} />
     </div>
     <div class="flex items-center justify-between gap-4">
       <p class="w-24 text-xs font-medium text-white">가수 이름</p>
-      <p class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white">
-        {song?.artist}
-      </p>
+      <input
+        type="text"
+        class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white"
+        on:input={(evt) => handleEditSongForm(evt, 'artist')}
+        value={songForm.artist} />
     </div>
     <div class="flex items-center justify-between gap-4">
       <p class="w-24 text-xs font-medium text-white">발매 연도</p>
-      <p class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white">
-        {song?.year}
-      </p>
+      <input
+        type="text"
+        inputmode="numeric"
+        class="min-h-6 w-full rounded bg-slate-300 px-2 py-1 text-xs font-medium text-white"
+        on:input={(evt) => handleEditSongForm(evt, 'year')}
+        value={songForm.year} />
     </div>
+    <button
+      class="my-2 w-full rounded-lg bg-gray-900 p-2 font-semibold text-white"
+      on:click={handleEditSongDetail}>수정</button>
   </div>
 </Modal>

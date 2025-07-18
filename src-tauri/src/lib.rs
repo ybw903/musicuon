@@ -1,5 +1,7 @@
 use tauri_plugin_sql::{Migration, MigrationKind};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Manager}; 
+
+mod metadata;
 
 #[tauri::command]
 async fn open_play_list_window(app: AppHandle) {
@@ -43,7 +45,9 @@ pub fn run() {
       }
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![open_play_list_window])
+    .invoke_handler(tauri::generate_handler![
+      open_play_list_window, metadata::write_metadata
+    ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }

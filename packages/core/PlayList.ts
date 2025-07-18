@@ -7,10 +7,12 @@ import { convertFileSrc } from '@tauri-apps/api/core'
 
 interface PlayListOptions {
   storage?: 'DB' | 'OPFS'
+  onUpdateList: (list: ISong[]) => void
 }
 export interface ISong {
   id: string
   src: string
+  path: string
   name: string
   title: string
   artist: string
@@ -22,6 +24,7 @@ class PlayList {
   #list: ISong[] = []
   #initLoad: boolean = false
   #storage: IStorage
+  #options?: PlayListOptions
 
   constructor(options?: PlayListOptions) {
     const { storage = 'OPFS' } = options ?? {}
@@ -34,6 +37,7 @@ class PlayList {
 
     this.loadList()
     this.#bindListeners()
+    this.#options = options
   }
 
   async #bindListeners() {
@@ -52,6 +56,18 @@ class PlayList {
 
       emit('length_response', { idx, length: this.#list.length })
     })
+
+    await listen('update_song_metadata', (evt: Event<ISong>) => {
+      const { path } = evt.payload
+
+      const targetSongIdx = this.#list.findIndex((targetSong) => targetSong.path === path)
+      if (targetSongIdx === -1) return
+
+      this.#list[targetSongIdx] = evt.payload
+      if (this.#options?.onUpdateList) {
+        this.#options.onUpdateList(this.#list)
+      }
+    })
   }
 
   async add(path: string) {
@@ -59,7 +75,14 @@ class PlayList {
 
     const src = convertFileSrc(path)
     const response = await fetch(src)
-    const metadata = await parseWebStream(response.body)
+
+    const contentLength = response.headers.get('Content-Length')
+    const size = contentLength ? parseInt(contentLength, 10) : undefined
+
+    const metadata = await parseWebStream(response.body, {
+      mimeType: response.headers.get('Content-Type') || '',
+      size
+    })
 
     const name = path.split('/').pop()
 
@@ -70,6 +93,7 @@ class PlayList {
     const song = {
       id: key,
       src,
+      path,
       name,
       title: metadata.common.title || '',
       artist: metadata.common.artist || '',
@@ -80,6 +104,10 @@ class PlayList {
     await this.#storage.set(key, Buffer.from(JSON.stringify(song)))
     this.#list.push(song)
 
+    if (this.#options?.onUpdateList) {
+      this.#options.onUpdateList(this.#list)
+    }
+
     if (this.#list.length === 1) {
       this.selectSong(0)
     }
@@ -89,6 +117,11 @@ class PlayList {
     const { id } = this.#list[idx]
     await this.#storage.remove(id)
     this.#list.splice(idx, 1)
+
+    if (this.#options?.onUpdateList) {
+      this.#options.onUpdateList(this.#list)
+    }
+
     emit('removed_play_list', { idx })
   }
 
