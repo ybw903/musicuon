@@ -11,7 +11,15 @@
   const handleAdd = async () => {
     let filePath
     if (env === 'webview') {
-      filePath = await open({ multiple: false })
+      filePath = await open({
+        multiple: false,
+        filters: [
+          {
+            name: 'audio-filter',
+            extensions: ['mp3', 'wav', 'ogg', 'aac', 'opus', 'flac', '3gp', 'adts', 'webm']
+          }
+        ]
+      })
     } else {
     }
 
