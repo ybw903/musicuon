@@ -5,6 +5,7 @@
 
   export let song: ISong
   export let onCloseModal: () => void
+  export let onEditSongDetail: (onEdit: Promise<unknown>) => void
 
   type SongFormKeys = 'title' | 'album' | 'artist' | 'year'
   let songForm: Pick<ISong, SongFormKeys> = {
@@ -49,12 +50,14 @@
   }
 
   function handleEditSongDetail() {
-    invoke('write_metadata', {
+    const promise = invoke('write_metadata', {
       song: {
         ...song,
         ...songForm
       }
-    }).then(() => onOpenModal(false))
+    })
+    onEditSongDetail(promise)
+    promise.then(() => onOpenModal(false))
   }
 </script>
 

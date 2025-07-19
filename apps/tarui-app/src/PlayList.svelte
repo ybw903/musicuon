@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast, Toaster } from 'svelte-french-toast'
   import { PlayListNavigation, PlayListHeader, PlayList, SongDetailModal } from '@musicuon/ui'
   import { resolveEnv } from './utils/envUtils'
 
@@ -12,6 +13,14 @@
   function onCloseSongDetailModal() {
     handleSelectShowSongDetail(null)
   }
+
+  function onEditSongDetail(onEdit: Promise<unknown>) {
+    toast.promise(onEdit, {
+      loading: '수정중...',
+      success: '수정 완료',
+      error: '수정 실패'
+    })
+  }
 </script>
 
 <main class="min-h-screen w-full bg-gray-900">
@@ -24,7 +33,11 @@
       <PlayList {env} onSelectShowSongDetail={handleSelectShowSongDetail} />
     </section>
   </div>
-  <SongDetailModal song={selectedShowSongDetail} onCloseModal={onCloseSongDetailModal} />
+  <SongDetailModal
+    song={selectedShowSongDetail}
+    onCloseModal={onCloseSongDetailModal}
+    {onEditSongDetail} />
+  <Toaster />
 </main>
 
 <style>

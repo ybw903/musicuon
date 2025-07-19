@@ -11,7 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@musicuon/ui": "workspace:*"
+    "@musicuon/ui": "workspace:*",
+    "svelte-french-toast": "^1.2.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
