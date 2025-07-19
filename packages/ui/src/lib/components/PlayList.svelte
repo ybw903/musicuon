@@ -8,6 +8,8 @@
   export let env: 'web' | 'webview'
   export let onSelectShowSongDetail: (song: ISong) => void
 
+  $: existPlayListItem = $playList.length > 0
+
   const handleAdd = async () => {
     let filePath
     if (env === 'webview') {
@@ -54,52 +56,59 @@
     </button>
   </header>
   <div class="mt-6">
-    <div class="flex bg-slate-800 px-4 py-3">
-      <div class="w-1/4 text-left text-xs text-white">파일명</div>
-      <div class="w-1/4 text-left text-xs text-white">제목</div>
-      <div class="w-1/4 text-left text-xs text-white">아티스트</div>
-      <div class="w-1/12 text-left text-xs text-white">연도</div>
-      <div class="w-1/12 text-center text-xs text-white">상세 정보</div>
-      <div class="w-1/12 text-center text-xs text-white">삭제</div>
-    </div>
-    <ul class="flex flex-col">
-      {#each $playList as song, i}
-        <li class="cursor-pointer border-b border-b-slate-200 py-1">
-          <button
-            class="flex w-full items-center px-4 py-6"
-            on:click={() => handleSelect(i)}
-            aria-label={`${i}번째 노래 선택`}>
-            <div class="w-1/4 truncate">
-              <span class="text-left text-sm font-medium text-white"> {song.name}</span>
-            </div>
-            <div class="w-1/4 truncate">
-              <span class="text-left text-sm font-medium text-white"> {song.title}</span>
-            </div>
-            <div class="w-1/4 truncate">
-              <span class="text-left text-sm font-medium text-white"> {song.artist}</span>
-            </div>
-            <div class="w-1/12 truncate">
-              <span class="text-left text-sm font-medium text-white"> {song.year}</span>
-            </div>
-            <div class="w-1/12">
-              <button
-                class="min-w-fit rounded-lg p-1"
-                on:click|stopPropagation={() => handleSelectShowSongDetail(song)}
-                aria-label="상세 정보">
-                <InfoIcon aria-hidden={true} size={16} color={'#fff'} />
-              </button>
-            </div>
-            <div class="w-1/12">
-              <button
-                class="min-w-fit rounded-lg p-1"
-                on:click|stopPropagation={() => handleDelete(i)}
-                aria-label="삭제">
-                <CircleXIcon aria-hidden={true} size={16} color={'#dc2626'} />
-              </button>
-            </div>
-          </button>
-        </li>
-      {/each}
-    </ul>
+    {#if existPlayListItem}
+      <div class="flex bg-slate-800 px-4 py-3">
+        <div class="w-1/4 text-left text-xs text-white">파일명</div>
+        <div class="w-1/4 text-left text-xs text-white">제목</div>
+        <div class="w-1/4 text-left text-xs text-white">아티스트</div>
+        <div class="w-1/12 text-left text-xs text-white">연도</div>
+        <div class="w-1/12 text-center text-xs text-white">상세 정보</div>
+        <div class="w-1/12 text-center text-xs text-white">삭제</div>
+      </div>
+
+      <ul class="flex flex-col">
+        {#each $playList as song, i}
+          <li class="cursor-pointer border-b border-b-slate-200 py-1">
+            <button
+              class="flex w-full items-center px-4 py-6"
+              on:click={() => handleSelect(i)}
+              aria-label={`${i}번째 노래 선택`}>
+              <div class="w-1/4 truncate">
+                <span class="text-left text-sm font-medium text-white"> {song.name}</span>
+              </div>
+              <div class="w-1/4 truncate">
+                <span class="text-left text-sm font-medium text-white"> {song.title}</span>
+              </div>
+              <div class="w-1/4 truncate">
+                <span class="text-left text-sm font-medium text-white"> {song.artist}</span>
+              </div>
+              <div class="w-1/12 truncate">
+                <span class="text-left text-sm font-medium text-white"> {song.year}</span>
+              </div>
+              <div class="w-1/12">
+                <button
+                  class="min-w-fit rounded-lg p-1"
+                  on:click|stopPropagation={() => handleSelectShowSongDetail(song)}
+                  aria-label="상세 정보">
+                  <InfoIcon aria-hidden={true} size={16} color={'#fff'} />
+                </button>
+              </div>
+              <div class="w-1/12">
+                <button
+                  class="min-w-fit rounded-lg p-1"
+                  on:click|stopPropagation={() => handleDelete(i)}
+                  aria-label="삭제">
+                  <CircleXIcon aria-hidden={true} size={16} color={'#dc2626'} />
+                </button>
+              </div>
+            </button>
+          </li>
+        {/each}
+      </ul>
+    {:else}
+      <div class="mt-20 flex justify-center">
+        <p class="text-lg font-bold text-white">재생할 노래를 목록에 추가해주세요.</p>
+      </div>
+    {/if}
   </div>
 </div>
