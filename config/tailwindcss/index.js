@@ -1,6 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,svelte}'],
+  content: [
+    './index.html',
+    './play-list/index.html',
+    './src/**/*.{js,ts,jsx,tsx,svelte}',
+    '../../packages/ui/src/**/*.{js,ts,jsx,tsx,svelte}'
+  ],
   theme: {
     extend: {
       animation: {

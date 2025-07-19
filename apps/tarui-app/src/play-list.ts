@@ -1,4 +1,4 @@
-import './app.css'
+import '@musicuon/ui/index.css'
 import PlayList from './PlayList.svelte'
 
 const playList = new PlayList({

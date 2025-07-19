@@ -1,4 +1,4 @@
-import './app.css'
+import '@musicuon/ui/index.css'
 import AudioPlayer from './AudioPlayer.svelte'
 
 const audioPlayer = new AudioPlayer({

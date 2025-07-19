@@ -1,0 +1,14 @@
+{
+  "name": "@musicuon/tailwindcss-config",
+  "version": "0.0.0",
+  "main": "index.js",
+  "source": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js"
+  ],
+  "sideEffects": false,
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

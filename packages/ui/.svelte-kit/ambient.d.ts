@@ -46,13 +46,16 @@ declare module '$env/static/private' {
 	export const PNPM_SCRIPT_SRC_DIR: string;
 	export const npm_package_devDependencies__tailwindcss_vite: string;
 	export const npm_package_devDependencies_vite_tsconfig_paths: string;
+	export const npm_package_dependencies__musicuon_tailwindcss_config: string;
 	export const VSCODE_PROFILE_INITIALIZED: string;
 	export const __CF_USER_TEXT_ENCODING: string;
+	export const npm_package_devDependencies_postcss: string;
 	export const npm_package_devDependencies_tslib: string;
 	export const npm_execpath: string;
 	export const npm_package_devDependencies_svelte: string;
 	export const PATH: string;
 	export const PWD: string;
+	export const npm_package_exports___index_css: string;
 	export const npm_package_devDependencies_tailwindcss: string;
 	export const npm_command: string;
 	export const npm_package_scripts_preview: string;
@@ -72,6 +75,7 @@ declare module '$env/static/private' {
 	export const npm_package_devDependencies__sveltejs_adapter_auto: string;
 	export const VSCODE_INJECTION: string;
 	export const npm_package_devDependencies_svelte_check: string;
+	export const npm_package_devDependencies_autoprefixer: string;
 	export const HOME: string;
 	export const npm_package_type: string;
 	export const SHLVL: string;
@@ -85,6 +89,7 @@ declare module '$env/static/private' {
 	export const npm_package_devDependencies__types_node: string;
 	export const npm_package_scripts_clean: string;
 	export const COLORTERM: string;
+	export const npm_package_sideEffects_0: string;
 	export const npm_node_execpath: string;
 }
 
@@ -137,13 +142,16 @@ declare module '$env/dynamic/private' {
 		PNPM_SCRIPT_SRC_DIR: string;
 		npm_package_devDependencies__tailwindcss_vite: string;
 		npm_package_devDependencies_vite_tsconfig_paths: string;
+		npm_package_dependencies__musicuon_tailwindcss_config: string;
 		VSCODE_PROFILE_INITIALIZED: string;
 		__CF_USER_TEXT_ENCODING: string;
+		npm_package_devDependencies_postcss: string;
 		npm_package_devDependencies_tslib: string;
 		npm_execpath: string;
 		npm_package_devDependencies_svelte: string;
 		PATH: string;
 		PWD: string;
+		npm_package_exports___index_css: string;
 		npm_package_devDependencies_tailwindcss: string;
 		npm_command: string;
 		npm_package_scripts_preview: string;
@@ -163,6 +171,7 @@ declare module '$env/dynamic/private' {
 		npm_package_devDependencies__sveltejs_adapter_auto: string;
 		VSCODE_INJECTION: string;
 		npm_package_devDependencies_svelte_check: string;
+		npm_package_devDependencies_autoprefixer: string;
 		HOME: string;
 		npm_package_type: string;
 		SHLVL: string;
@@ -176,6 +185,7 @@ declare module '$env/dynamic/private' {
 		npm_package_devDependencies__types_node: string;
 		npm_package_scripts_clean: string;
 		COLORTERM: string;
+		npm_package_sideEffects_0: string;
 		npm_node_execpath: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;

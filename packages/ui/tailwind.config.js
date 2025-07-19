@@ -1,7 +1,10 @@
 import sharedConfig from '@musicuon/tailwindcss-config'
 
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
+  prefix: 'ui-',
   presets: [sharedConfig],
-  content: [...sharedConfig.content]
+  content: []
 }
+
+export default config
