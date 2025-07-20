@@ -8,6 +8,9 @@
   import { onMount } from 'svelte'
   import PrevSongIcon from './icons/PrevSongIcon.svelte'
   import NextSongIcon from './icons/NextSongIcon.svelte'
+  import ShuffleIcon from './icons/ShuffleIcon.svelte'
+  import RepeatIcon from './icons/RepeatIcon.svelte'
+  import clsx from 'clsx'
 
   dayjs.extend(durationPlugin)
 
@@ -20,6 +23,9 @@
   let currentTime = 0
   let duration = 0
   let currentSong: ISong | null = null
+
+  let repeatPlay = false
+  let shufflePlay = false
 
   $: displayVolume = volume * 100
   $: displayDuration = dayjs.duration(duration, 's').format('mm:ss')
@@ -55,6 +61,9 @@
       audioPlayer.setSource(audioRef)
       audioPlayer.volume(volume)
     }
+    if (playing === true) {
+      await handlePause()
+    }
 
     await audioPlayer.play()
     currentSong = await audioPlayer.getSong()
@@ -67,19 +76,41 @@
   }
 
   async function handlePrev() {
-    await handlePause()
-    await audioPlayer.prevSong()
+    if (shufflePlay) {
+      const shufflePos = await audioPlayer.getShufflePos()
+      await audioPlayer.selectSong(shufflePos)
+    } else {
+      await audioPlayer.prevSong()
+    }
     await handlePlay()
   }
 
   async function handleNext() {
-    await handlePause()
-    await audioPlayer.nextSong()
+    if (shufflePlay) {
+      const shufflePos = await audioPlayer.getShufflePos()
+      await audioPlayer.selectSong(shufflePos)
+    } else {
+      await audioPlayer.nextSong()
+    }
     await handlePlay()
   }
 
-  function handleCurrentTime(evt: any) {
+  async function handleCurrentTime(evt: any) {
     currentTime = evt.target.currentTime
+    const isLast = await audioPlayer.isLast()
+
+    if (currentTime === duration && (shufflePlay || !isLast)) {
+      return handleNext()
+    }
+
+    if (currentTime === duration && isLast && repeatPlay) {
+      await audioPlayer.selectSong(0)
+      return handlePlay()
+    }
+
+    if (currentTime === duration && isLast && !repeatPlay) {
+      playing = false
+    }
   }
 
   function handleLoadedMetaData(evt: any) {
@@ -102,6 +133,16 @@
 
   function handleOpenPlayList() {
     audioPlayer.openPlayListWindow()
+  }
+
+  function handleRepeatPlay() {
+    repeatPlay = !repeatPlay
+    audioPlayer.repeatPlay = repeatPlay
+  }
+
+  function handleShufflePlay() {
+    shufflePlay = !shufflePlay
+    audioPlayer.shufflePlay = shufflePlay
   }
 </script>
 
@@ -142,30 +183,50 @@
         <p class="text-sm text-white">{displayDuration}</p>
       </div>
     </div>
-    <div class="flex items-center justify-center gap-6">
+    <div class="mt-1 flex items-center justify-between">
       <button
-        class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-        on:click={handlePrev}
-        aria-label="이전 곡">
-        <PrevSongIcon />
+        class={clsx(
+          'flex items-center rounded-none border-0 bg-inherit p-0 font-bold transition-colors ease-out',
+          shufflePlay ? 'text-green-400' : 'text-white'
+        )}
+        on:click={handleShufflePlay}
+        aria-label="셔플">
+        <ShuffleIcon />
       </button>
+      <div class="flex items-center justify-center gap-6">
+        <button
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
+          on:click={handlePrev}
+          aria-label="이전 곡">
+          <PrevSongIcon />
+        </button>
+        <button
+          class="rounded-none border-0 bg-inherit p-0 text-black"
+          on:click={playing ? handlePause : handlePlay}
+          aria-label={playing ? '일시정지' : '재생'}>
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-400">
+            {#if playing}
+              <PauseIcon aria-hidden size={28} fill={'#111827'} />
+            {:else}
+              <PlayIcon aria-hidden size={28} fill={'#111827'} />
+            {/if}
+          </div>
+        </button>
+        <button
+          class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
+          on:click={handleNext}
+          aria-label="다음 곡">
+          <NextSongIcon />
+        </button>
+      </div>
       <button
-        class="rounded-none border-0 bg-inherit p-0 text-black"
-        on:click={playing ? handlePause : handlePlay}
-        aria-label={playing ? '일시정지' : '재생'}>
-        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-400">
-          {#if playing}
-            <PauseIcon aria-hidden size={28} fill={'#111827'} />
-          {:else}
-            <PlayIcon aria-hidden size={28} fill={'#111827'} />
-          {/if}
-        </div>
-      </button>
-      <button
-        class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-        on:click={handleNext}
-        aria-label="다음 곡">
-        <NextSongIcon />
+        class={clsx(
+          'flex items-center rounded-none border-0 bg-inherit p-0 font-bold transition-colors ease-out',
+          repeatPlay ? 'text-green-400' : 'text-white'
+        )}
+        on:click={handleRepeatPlay}
+        aria-label="반복재생">
+        <RepeatIcon />
       </button>
     </div>
     <div class="mt-3 flex items-center gap-1">

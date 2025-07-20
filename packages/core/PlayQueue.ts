@@ -101,12 +101,22 @@ class PlayQueue {
   }
 
   async next() {
-    const length = await this.getLength()
-    if (length <= this.#index + 1) {
+    const isLast = await this.isLast()
+    if (isLast) {
       return this.pos()
     }
     this.#index += 1
     return this.pos()
+  }
+
+  async isLast() {
+    const length = await this.getLength()
+    return this.#index + 1 === length
+  }
+
+  async getShufflePosIdx() {
+    const length = await this.getLength()
+    return Math.floor(Math.random() * length)
   }
 
   async getLength(): Promise<number> {

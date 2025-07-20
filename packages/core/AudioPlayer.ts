@@ -19,6 +19,10 @@ class AudioPlayer {
   #audioVisualizer?: AudioVisualizer
   #visualCanvasElement?: HTMLCanvasElement
 
+  // TODO: move to play queue
+  repeatPlay: boolean = false
+  shufflePlay: boolean = false
+
   constructor({ options }: { options?: { visualCanvasElement?: HTMLCanvasElement } } = {}) {
     this.#playQueue = new PlayQueue()
 
@@ -85,6 +89,10 @@ class AudioPlayer {
 
   async prevSong() {
     await this.#playQueue.prev()
+  }
+
+  async selectSong(pos: number) {
+    await this.#playQueue.selectPos(pos)
   }
 
   volume(vol?: number) {
@@ -197,6 +205,14 @@ class AudioPlayer {
 
   isInitSource() {
     return this.#initSource
+  }
+
+  async getShufflePos() {
+    return this.#playQueue.getShufflePosIdx()
+  }
+
+  async isLast() {
+    return this.#playQueue.isLast()
   }
 }
 
