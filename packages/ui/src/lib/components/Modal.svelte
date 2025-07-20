@@ -27,7 +27,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <dialog
-  class="rounded-lg bg-slate-400 backdrop:bg-black/50 backdrop:backdrop-blur-md open:animate-zoom open:backdrop:animate-fade"
+  class="open:animate-zoom open:backdrop:animate-fade rounded-lg bg-gray-800 backdrop:bg-black/50 backdrop:backdrop-blur-md"
   bind:this={dialogRef}
   on:close={handleCloseModal}
   on:click={handleClickOutside}>

@@ -4,6 +4,10 @@
   import { PlusIcon, CircleXIcon, InfoIcon } from 'lucide-svelte'
   import { playList } from '../../store'
   import type { ISong } from '@musicuon/core'
+  import dayjs from 'dayjs'
+  import durationPlugin from 'dayjs/plugin/duration'
+
+  dayjs.extend(durationPlugin)
 
   export let env: 'web' | 'webview'
   export let onSelectShowSongDetail: (song: ISong) => void

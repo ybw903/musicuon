@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { parseWebStream } from 'music-metadata'
+import { parseWebStream, type IFormat } from 'music-metadata'
 import { type IStorage } from '@musicuon/storage'
 import { OpfsStorage, DbStorage } from '@musicuon/storage'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
@@ -18,6 +18,7 @@ export interface ISong {
   artist: string
   album: string
   year: number
+  format: IFormat
 }
 
 class PlayList {
@@ -98,7 +99,8 @@ class PlayList {
       title: metadata.common.title || '',
       artist: metadata.common.artist || '',
       album: metadata.common.album || '',
-      year: metadata.common.year || 0
+      year: metadata.common.year || 0,
+      format: metadata.format
     }
 
     await this.#storage.set(key, Buffer.from(JSON.stringify(song)))
