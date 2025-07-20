@@ -41,9 +41,11 @@
     key: SongFormKeys
   ) {
     if (key === 'year') {
-      // TODO: check different dom value from state value
-      if (/\D/.test(evt.currentTarget.value)) return
-      songForm[key] = Number(evt.currentTarget.value)
+      if (/\D/.test(evt.currentTarget.value)) {
+        evt.currentTarget.value = String(songForm[key])
+      } else {
+        songForm[key] = Number(evt.currentTarget.value)
+      }
     } else {
       songForm[key] = evt.currentTarget.value
     }
