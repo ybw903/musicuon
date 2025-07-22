@@ -85,12 +85,20 @@ class PlayQueue {
     return promise as Promise<ISong | null>
   }
 
-  async selectPos(pos: number): Promise<ISong | null> {
+  async selectPos(pos: number | 'first' | 'last'): Promise<ISong | null> {
     const length = await this.getLength()
 
-    if (pos >= length || pos < 0) throw new Error('invalid playlist position')
+    if (typeof pos === 'number' && (pos >= length || pos < 0))
+      throw new Error('invalid playlist position')
 
-    this.#index = pos
+    if (pos === 'first') {
+      this.#index = 0
+    } else if (pos === 'last') {
+      this.#index = length - 1
+    } else {
+      this.#index = pos
+    }
+
     return this.pos()
   }
 
@@ -107,6 +115,10 @@ class PlayQueue {
     }
     this.#index += 1
     return this.pos()
+  }
+
+  async isFirst() {
+    return this.#index === 0
   }
 
   async isLast() {

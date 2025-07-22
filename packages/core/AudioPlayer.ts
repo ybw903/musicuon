@@ -91,7 +91,7 @@ class AudioPlayer {
     await this.#playQueue.prev()
   }
 
-  async selectSong(pos: number) {
+  async selectSong(pos: number | 'first' | 'last') {
     await this.#playQueue.selectPos(pos)
   }
 
@@ -209,6 +209,10 @@ class AudioPlayer {
 
   async getShufflePos() {
     return this.#playQueue.getShufflePosIdx()
+  }
+
+  async isFirst() {
+    return this.#playQueue.isFirst()
   }
 
   async isLast() {

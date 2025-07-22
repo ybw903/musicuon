@@ -76,9 +76,13 @@
   }
 
   async function handlePrev() {
+    const isFirst = await audioPlayer.isFirst()
+
     if (shufflePlay) {
       const shufflePos = await audioPlayer.getShufflePos()
       await audioPlayer.selectSong(shufflePos)
+    } else if (isFirst && repeatPlay) {
+      await audioPlayer.selectSong('last')
     } else {
       await audioPlayer.prevSong()
     }
@@ -86,9 +90,13 @@
   }
 
   async function handleNext() {
+    const isLast = await audioPlayer.isLast()
+
     if (shufflePlay) {
       const shufflePos = await audioPlayer.getShufflePos()
       await audioPlayer.selectSong(shufflePos)
+    } else if (isLast && repeatPlay) {
+      await audioPlayer.selectSong('first')
     } else {
       await audioPlayer.nextSong()
     }
@@ -104,7 +112,7 @@
     }
 
     if (currentTime === duration && isLast && repeatPlay) {
-      await audioPlayer.selectSong(0)
+      await audioPlayer.selectSong('first')
       return handlePlay()
     }
 
