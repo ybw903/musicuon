@@ -27,6 +27,7 @@
     repeatPlay,
     shufflePlay,
 
+    onEndedAudio,
     onLoadedMetaData,
     onCurrentTime,
     onPlayTime,
@@ -59,6 +60,7 @@
   <audio
     src="/audio/sample.mp3"
     bind:this={audioRef}
+    on:ended={onEndedAudio}
     on:loadedmetadata={onLoadedMetaData}
     on:timeupdate={onCurrentTime} />
   <div class="px-[24px] pt-[16px]">

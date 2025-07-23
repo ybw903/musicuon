@@ -110,55 +110,76 @@ function createAudioPlayerStore() {
     await onPlay()
   }
 
-  async function onCurrentTime(evt: any) {
+  async function onEndedAudio() {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
 
-    currentTime.set(evt.target.currentTime)
-    $audioPlayerManager.setCurrentTime(evt.target.currentTime)
-
     const isLast = await $audioPlayerManager.isLast()
 
-    if (get(currentTime) === get(duration) && (get(shufflePlay) || !isLast)) {
+    if (get(shufflePlay) || !isLast) {
       return onNext()
     }
 
-    if (get(currentTime) === get(duration) && isLast && get(repeatPlay)) {
+    if (isLast && get(repeatPlay)) {
       await $audioPlayerManager.selectSong('first')
       return onPlay()
     }
 
-    if (get(currentTime) === get(duration) && isLast && !get(repeatPlay)) {
+    if (isLast && !get(repeatPlay)) {
       isPlaying.set(false)
     }
   }
 
-  function onLoadedMetaData(evt: any) {
+  function onCurrentTime(
+    evt: Event & {
+      currentTarget: EventTarget & HTMLAudioElement
+    }
+  ) {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
 
-    duration.set(evt.target.duration)
-    $audioPlayerManager.setDuration(evt.target.duration)
+    currentTime.set(evt.currentTarget.currentTime)
+    $audioPlayerManager.setCurrentTime(evt.currentTarget.currentTime)
+  }
+
+  function onLoadedMetaData(
+    evt: Event & {
+      currentTarget: EventTarget & HTMLAudioElement
+    }
+  ) {
+    const $audioPlayerManager = get(audioPlayerManager)
+    if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
+
+    duration.set(evt.currentTarget.duration)
+    $audioPlayerManager.setDuration(evt.currentTarget.duration)
   }
 
   // [TODO] dispatch event through debounced?...
-  function onPlayTime(evt: any) {
+  function onPlayTime(
+    evt: Event & {
+      currentTarget: EventTarget & HTMLInputElement
+    }
+  ) {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
 
     onPause().then(() => {
-      currentTime.set(evt.target.value)
-      $audioPlayerManager.playtime(evt.target.value)
+      currentTime.set(Number(evt.currentTarget.value))
+      $audioPlayerManager.playtime(Number(evt.currentTarget.value))
       onPlay()
     })
   }
 
-  function onVolume(evt: any) {
+  function onVolume(
+    evt: Event & {
+      currentTarget: EventTarget & HTMLInputElement
+    }
+  ) {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
 
-    volume.set(evt.target.value / 100)
-    $audioPlayerManager.volume(evt.target.value / 100)
+    volume.set(Number(evt.currentTarget.value) / 100)
+    $audioPlayerManager.volume(Number(evt.currentTarget.value) / 100)
   }
 
   function onRepeatPlay() {
@@ -194,6 +215,7 @@ function createAudioPlayerStore() {
     onPause,
     onPrev,
     onNext,
+    onEndedAudio,
     onCurrentTime,
     onLoadedMetaData,
     onPlayTime,
