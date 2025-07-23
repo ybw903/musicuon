@@ -128,22 +128,17 @@ class AudioPlayer {
     return this.#duration
   }
 
-  onDuration(evt: any) {
-    this.#duration = evt.target.duration
+  setDuration(duration: number) {
+    this.#duration = duration
   }
 
-  onCurrentTime(evt: any) {
-    this.#currentTime = evt.target.currentTime
+  setCurrentTime(currentTime: number) {
+    this.#currentTime = currentTime
   }
 
   setSource(source: HTMLAudioElement) {
     if (!this.#ctx) {
       this.#initAudioContext()
-    }
-
-    if (this.#sourceElement) {
-      this.#sourceElement.removeEventListener('timeupdate', this.onCurrentTime.bind(this))
-      this.#sourceElement.removeEventListener('loadedmetadata', this.onDuration.bind(this))
     }
 
     if (this.#source && this.#gainNode) {
@@ -156,9 +151,6 @@ class AudioPlayer {
 
     this.#sourceElement = source
     this.#source = this.#ctx?.createMediaElementSource(source)
-
-    this.#sourceElement.addEventListener('loadedmetadata', this.onDuration.bind(this))
-    this.#sourceElement.addEventListener('timeupdate', this.onCurrentTime.bind(this))
 
     if (this.#gainNode) {
       this.#source?.connect(this.#gainNode)

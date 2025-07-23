@@ -2,155 +2,56 @@
   import { PlayIcon, PauseIcon, Volume2Icon, ListIcon } from 'lucide-svelte'
   import musicuonLogo from '../../assets/musicuon_logo.png'
 
-  import { AudioPlayer, type ISong } from '@musicuon/core'
   import dayjs from 'dayjs'
   import durationPlugin from 'dayjs/plugin/duration'
   import { onMount } from 'svelte'
+  import clsx from 'clsx'
+  import { audioPlayer } from '../../store'
   import PrevSongIcon from './icons/PrevSongIcon.svelte'
   import NextSongIcon from './icons/NextSongIcon.svelte'
   import ShuffleIcon from './icons/ShuffleIcon.svelte'
   import RepeatIcon from './icons/RepeatIcon.svelte'
-  import clsx from 'clsx'
 
   dayjs.extend(durationPlugin)
 
   export let visualCanvasRef: HTMLCanvasElement
   let audioRef: HTMLAudioElement
-  let audioPlayer: AudioPlayer
 
-  let playing = false
-  let volume = 1
-  let currentTime = 0
-  let duration = 0
-  let currentSong: ISong | null = null
+  const {
+    audioPlayerManager,
+    isPlaying,
+    volume,
+    duration,
+    currentTime,
+    currentSong,
+    repeatPlay,
+    shufflePlay,
 
-  let repeatPlay = false
-  let shufflePlay = false
+    onLoadedMetaData,
+    onCurrentTime,
+    onPlayTime,
+    onShufflePlay,
+    onPrev,
+    onPause,
+    onPlay,
+    onNext,
+    onRepeatPlay,
+    onVolume
+  } = audioPlayer
 
-  $: displayVolume = volume * 100
-  $: displayDuration = dayjs.duration(duration, 's').format('mm:ss')
-  $: displayCurrentTime = dayjs.duration(currentTime, 's').format('mm:ss')
+  $: displayVolume = $volume * 100
+  $: displayDuration = dayjs.duration($duration, 's').format('mm:ss')
+  $: displayCurrentTime = dayjs.duration($currentTime, 's').format('mm:ss')
 
   onMount(async () => {
-    // TODO: strict type check
-    audioPlayer = new AudioPlayer(
+    audioPlayer.init(
+      audioRef,
       visualCanvasRef ? { options: { visualCanvasElement: visualCanvasRef } } : {}
     )
-    audioPlayer.listenSelectedPlayList(async (song) => {
-      await handlePause()
-      currentSong = await audioPlayer.getSong()
-      await handlePlay()
-    })
-    audioPlayer.listenRemovedPlayList(async (idx, currentPlaying) => {
-      if (!currentPlaying) return
-
-      await handlePause()
-      currentTime = 0
-      duration = 0
-
-      currentSong = await audioPlayer.getSong()
-      if (!currentSong) return
-
-      await handlePlay()
-    })
-    currentSong = await audioPlayer.getSong()
   })
 
-  async function handlePlay() {
-    if (!audioPlayer.isInitSource()) {
-      audioPlayer.setSource(audioRef)
-      audioPlayer.volume(volume)
-    }
-    if (playing === true) {
-      await handlePause()
-    }
-
-    await audioPlayer.play()
-    currentSong = await audioPlayer.getSong()
-    playing = true
-  }
-
-  async function handlePause() {
-    await audioPlayer.pause()
-    playing = false
-  }
-
-  async function handlePrev() {
-    const isFirst = await audioPlayer.isFirst()
-
-    if (shufflePlay) {
-      const shufflePos = await audioPlayer.getShufflePos()
-      await audioPlayer.selectSong(shufflePos)
-    } else if (isFirst && repeatPlay) {
-      await audioPlayer.selectSong('last')
-    } else {
-      await audioPlayer.prevSong()
-    }
-    await handlePlay()
-  }
-
-  async function handleNext() {
-    const isLast = await audioPlayer.isLast()
-
-    if (shufflePlay) {
-      const shufflePos = await audioPlayer.getShufflePos()
-      await audioPlayer.selectSong(shufflePos)
-    } else if (isLast && repeatPlay) {
-      await audioPlayer.selectSong('first')
-    } else {
-      await audioPlayer.nextSong()
-    }
-    await handlePlay()
-  }
-
-  async function handleCurrentTime(evt: any) {
-    currentTime = evt.target.currentTime
-    const isLast = await audioPlayer.isLast()
-
-    if (currentTime === duration && (shufflePlay || !isLast)) {
-      return handleNext()
-    }
-
-    if (currentTime === duration && isLast && repeatPlay) {
-      await audioPlayer.selectSong('first')
-      return handlePlay()
-    }
-
-    if (currentTime === duration && isLast && !repeatPlay) {
-      playing = false
-    }
-  }
-
-  function handleLoadedMetaData(evt: any) {
-    duration = evt.target.duration
-  }
-
-  // [TODO] dispatch event through debounced?...
-  function handlePlayTime(evt: any) {
-    handlePause().then(() => {
-      currentTime = evt.target.value
-      audioPlayer.playtime(evt.target.value)
-      handlePlay()
-    })
-  }
-
-  function handleVolume(evt: any) {
-    volume = evt.target.value / 100
-    audioPlayer.volume(evt.target.value / 100)
-  }
-
   function handleOpenPlayList() {
-    audioPlayer.openPlayListWindow()
-  }
-
-  function handleRepeatPlay() {
-    repeatPlay = !repeatPlay
-    audioPlayer.repeatPlay = repeatPlay
-  }
-
-  function handleShufflePlay() {
-    shufflePlay = !shufflePlay
-    audioPlayer.shufflePlay = shufflePlay
+    $audioPlayerManager?.openPlayListWindow()
   }
 </script>
 
@@ -158,12 +59,12 @@
   <audio
     src="/audio/sample.mp3"
     bind:this={audioRef}
-    on:loadedmetadata={handleLoadedMetaData}
-    on:timeupdate={handleCurrentTime} />
+    on:loadedmetadata={onLoadedMetaData}
+    on:timeupdate={onCurrentTime} />
   <div class="px-[24px] pt-[16px]">
     <div class="flex items-center justify-between">
       <p class="text-white">
-        {currentSong ? currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
+        {$currentSong ? $currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
       </p>
       <button on:click={handleOpenPlayList}>
         <ListIcon color={'#fff'} />
@@ -183,9 +84,9 @@
       <input
         class="bg-white"
         type="range"
-        value={currentTime}
-        max={duration}
-        on:change={handlePlayTime} />
+        value={$currentTime}
+        max={$duration}
+        on:change={onPlayTime} />
       <div class="flex justify-between">
         <p class="text-sm text-white">{displayCurrentTime}</p>
         <p class="text-sm text-white">{displayDuration}</p>
@@ -195,25 +96,25 @@
       <button
         class={clsx(
           'flex items-center rounded-none border-0 bg-inherit p-0 font-bold transition-colors ease-out',
-          shufflePlay ? 'text-green-400' : 'text-white'
+          $shufflePlay ? 'text-green-400' : 'text-white'
         )}
-        on:click={handleShufflePlay}
+        on:click={onShufflePlay}
         aria-label="셔플">
         <ShuffleIcon />
       </button>
       <div class="flex items-center justify-center gap-6">
         <button
           class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-          on:click={handlePrev}
+          on:click={onPrev}
           aria-label="이전 곡">
           <PrevSongIcon />
         </button>
         <button
           class="rounded-none border-0 bg-inherit p-0 text-black"
-          on:click={playing ? handlePause : handlePlay}
-          aria-label={playing ? '일시정지' : '재생'}>
+          on:click={$isPlaying ? onPause : onPlay}
+          aria-label={$isPlaying ? '일시정지' : '재생'}>
           <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-400">
-            {#if playing}
+            {#if $isPlaying}
               <PauseIcon aria-hidden size={28} fill={'#111827'} />
             {:else}
               <PlayIcon aria-hidden size={28} fill={'#111827'} />
@@ -222,7 +123,7 @@
         </button>
         <button
           class="flex items-center rounded-none border-0 bg-inherit p-0 font-bold text-white"
-          on:click={handleNext}
+          on:click={onNext}
           aria-label="다음 곡">
           <NextSongIcon />
         </button>
@@ -230,16 +131,16 @@
       <button
         class={clsx(
           'flex items-center rounded-none border-0 bg-inherit p-0 font-bold transition-colors ease-out',
-          repeatPlay ? 'text-green-400' : 'text-white'
+          $repeatPlay ? 'text-green-400' : 'text-white'
         )}
-        on:click={handleRepeatPlay}
+        on:click={onRepeatPlay}
         aria-label="반복재생">
         <RepeatIcon />
       </button>
     </div>
     <div class="mt-3 flex items-center gap-1">
       <Volume2Icon color={'#fff'} />
-      <input type="range" value={displayVolume} max="200" on:change={handleVolume} />
+      <input type="range" value={displayVolume} max="200" on:change={onVolume} />
     </div>
   </div>
 </div>
