@@ -48,6 +48,15 @@ class PlayQueue {
         this.#pendingRequests.delete(LENGTH_REQUEST_ID)
       }
     })
+
+    await listen('swapped_play_list', (evt: Event<{ idxA: number; idxB: number }>) => {
+      const { idxA, idxB } = evt.payload
+      if (this.#index === idxA) {
+        this.#index = idxB
+      } else if (this.#index === idxB) {
+        this.#index = idxA
+      }
+    })
   }
 
   async listenSelectedPlayList(onSelect: (song: ISong) => Promise<void>) {

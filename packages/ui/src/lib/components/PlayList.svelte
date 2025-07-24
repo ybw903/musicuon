@@ -1,11 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { open } from '@tauri-apps/plugin-dialog'
-  import { PlusIcon, CircleXIcon, InfoIcon } from 'lucide-svelte'
+  import { PlusIcon } from 'lucide-svelte'
   import { playList } from '../../store'
   import type { ISong } from '@musicuon/core'
   import dayjs from 'dayjs'
   import durationPlugin from 'dayjs/plugin/duration'
+  import PlayListItem from './PlayListItem.svelte'
+  import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter'
 
   dayjs.extend(durationPlugin)
 
@@ -13,6 +15,12 @@
   export let onSelectShowSongDetail: (song: ISong) => void
 
   $: existPlayListItem = $playList.length > 0
+  let dragAndDropList: ISong[] = []
+
+  $: $playList,
+    (() => {
+      dragAndDropList = $playList
+    })()
 
   const handleAdd = async () => {
     let filePath
@@ -46,8 +54,26 @@
     playList.selectSong(idx)
   }
 
-  onMount(async () => {
+  onMount(() => {
     playList.init(env)
+
+    const cleanup = monitorForElements({
+      onDrop({ source, location }) {
+        const destination = location.current.dropTargets[0]
+        if (!destination) {
+          // if dropped outside of any drop targets
+          return
+        }
+
+        const destinationIdx = destination.data.idx as number
+        const sourceIdx = source.data.idx as number
+        playList.swapSong(destinationIdx, sourceIdx)
+      }
+    })
+
+    return () => {
+      cleanup()
+    }
   })
 </script>
 
@@ -71,42 +97,8 @@
       </div>
 
       <ul class="flex flex-col">
-        {#each $playList as song, i}
-          <li class="cursor-pointer border-b border-b-slate-200 py-1">
-            <button
-              class="flex w-full items-center px-4 py-6"
-              on:click={() => handleSelect(i)}
-              aria-label={`${i}번째 노래 선택`}>
-              <div class="w-1/4 truncate">
-                <span class="text-left text-sm font-medium text-white"> {song.name}</span>
-              </div>
-              <div class="w-1/4 truncate">
-                <span class="text-left text-sm font-medium text-white"> {song.title}</span>
-              </div>
-              <div class="w-1/4 truncate">
-                <span class="text-left text-sm font-medium text-white"> {song.artist}</span>
-              </div>
-              <div class="w-1/12 truncate">
-                <span class="text-left text-sm font-medium text-white"> {song.year}</span>
-              </div>
-              <div class="w-1/12">
-                <button
-                  class="min-w-fit rounded-lg p-1"
-                  on:click|stopPropagation={() => handleSelectShowSongDetail(song)}
-                  aria-label="상세 정보">
-                  <InfoIcon aria-hidden={true} size={16} color={'#fff'} />
-                </button>
-              </div>
-              <div class="w-1/12">
-                <button
-                  class="min-w-fit rounded-lg p-1"
-                  on:click|stopPropagation={() => handleDelete(i)}
-                  aria-label="삭제">
-                  <CircleXIcon aria-hidden={true} size={16} color={'#dc2626'} />
-                </button>
-              </div>
-            </button>
-          </li>
+        {#each dragAndDropList as song, i}
+          <PlayListItem idx={i} {song} {handleSelect} {handleSelectShowSongDetail} {handleDelete} />
         {/each}
       </ul>
     {:else}

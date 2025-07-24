@@ -131,6 +131,17 @@ class PlayList {
     emit('selected_play_list', { idx, song: this.#list[idx] })
   }
 
+  swapSongPosition(idxA: number, idxB: number) {
+    const tmp = this.#list[idxA]
+    this.#list[idxA] = this.#list[idxB]
+    this.#list[idxB] = tmp
+    emit('swapped_play_list', { idxA, idxB })
+
+    if (this.#options?.onUpdateList) {
+      this.#options.onUpdateList(this.#list)
+    }
+  }
+
   clear() {
     this.#list = []
   }

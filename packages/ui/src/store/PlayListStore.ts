@@ -20,6 +20,11 @@ function createPlayListStore() {
     playListManager.selectSong(index)
   }
 
+  const swapSong = (indexA: number, indexB: number) => {
+    if (!playListManager) throw new Error('Store needs to be initialized!')
+    playListManager.swapSongPosition(indexA, indexB)
+  }
+
   const init = async (env: 'web' | 'webview') => {
     playListManager = new PlayList({
       storage: env === 'web' ? 'OPFS' : 'DB',
@@ -34,7 +39,8 @@ function createPlayListStore() {
     init,
     addSong,
     removeSong,
-    selectSong
+    selectSong,
+    swapSong
   }
 }
 

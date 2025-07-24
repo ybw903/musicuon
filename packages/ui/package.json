@@ -31,10 +31,10 @@
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@tailwindcss/vite": "^4.1.8",
     "@types/node": "^24.0.0",
-    "svelte": "^4.2.20",
-    "svelte-check": "^3.8.6",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.4",
+    "svelte": "^4.2.20",
+    "svelte-check": "^3.8.6",
     "tailwindcss": "^3.4.17",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
@@ -43,6 +43,9 @@
     "vite-tsconfig-paths": "^5.1.4"
   },
   "dependencies": {
+    "@atlaskit/pragmatic-drag-and-drop": "^1.7.4",
+    "@atlaskit/pragmatic-drag-and-drop-flourish": "^2.0.3",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
     "@musicuon/core": "workspace:*",
     "@musicuon/tailwindcss-config": "workspace:*",
     "dayjs": "^1.11.13",

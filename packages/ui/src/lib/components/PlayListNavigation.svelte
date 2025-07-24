@@ -1,5 +1,6 @@
 <script lang="ts">
   import PlayListIcon from './icons/PlayListIcon.svelte'
+
   import clsx from 'clsx'
 
   let selectedMenuIdx = 0

@@ -10,6 +10,7 @@ async fn open_play_list_window(app: AppHandle) {
         let _new_window = tauri::WebviewWindowBuilder::new(&app, "play-list", tauri::WebviewUrl::App("http://localhost:5173/play-list/index.html".into()))
             .title("play-list | musicuon")
             .inner_size(1280.0, 940.0)
+            .disable_drag_drop_handler()
             .build()
             .unwrap();
      };
