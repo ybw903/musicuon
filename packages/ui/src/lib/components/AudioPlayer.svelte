@@ -27,9 +27,6 @@
     repeatPlay,
     shufflePlay,
 
-    onEndedAudio,
-    onLoadedMetaData,
-    onCurrentTime,
     onPlayTime,
     onShufflePlay,
     onPrev,
@@ -45,10 +42,7 @@
   $: displayCurrentTime = dayjs.duration($currentTime, 's').format('mm:ss')
 
   onMount(async () => {
-    audioPlayer.init(
-      audioRef,
-      visualCanvasRef ? { options: { visualCanvasElement: visualCanvasRef } } : {}
-    )
+    audioPlayer.init(visualCanvasRef ? { options: { visualCanvasElement: visualCanvasRef } } : {})
   })
 
   function handleOpenPlayList() {
@@ -57,12 +51,6 @@
 </script>
 
 <div class="h-full w-full bg-gray-900">
-  <audio
-    src="/audio/sample.mp3"
-    bind:this={audioRef}
-    on:ended={onEndedAudio}
-    on:loadedmetadata={onLoadedMetaData}
-    on:timeupdate={onCurrentTime} />
   <div class="px-[24px] pt-[16px]">
     <div class="flex items-center justify-between">
       <p class="text-white">

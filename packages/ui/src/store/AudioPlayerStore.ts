@@ -16,12 +16,15 @@ function createAudioPlayerStore() {
   const repeatPlay = writable(false)
   const shufflePlay = writable(false)
 
-  const init = async (
-    audioEl: HTMLAudioElement,
-    options: { options?: { visualCanvasElement?: HTMLCanvasElement } } = {}
-  ) => {
-    audioRef = audioEl
-    const audioPlayer = new AudioPlayer(options)
+  const init = async (options: { options?: { visualCanvasElement?: HTMLCanvasElement } } = {}) => {
+    const audioPlayer = new AudioPlayer({
+      options: {
+        ...options.options,
+        onEndedAudio,
+        onLoadedMetaData,
+        onCurrentTime
+      }
+    })
 
     audioPlayer.listenSelectedPlayList(async () => {
       await onPause()
@@ -52,17 +55,7 @@ function createAudioPlayerStore() {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
 
-    if (!$audioPlayerManager.isInitSource() && !!audioRef) {
-      $audioPlayerManager.setSource(audioRef)
-    }
-    if (get(isPlaying) === true) {
-      await onPause()
-    }
-
     await $audioPlayerManager.play()
-
-    const song = await $audioPlayerManager.getSong()
-    currentSong.set(song)
     isPlaying.set(true)
   }
 
@@ -132,26 +125,18 @@ function createAudioPlayerStore() {
 
   function onCurrentTime(
     evt: Event & {
-      currentTarget: EventTarget & HTMLAudioElement
+      target: EventTarget & HTMLAudioElement
     }
   ) {
-    const $audioPlayerManager = get(audioPlayerManager)
-    if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
-
-    currentTime.set(evt.currentTarget.currentTime)
-    $audioPlayerManager.setCurrentTime(evt.currentTarget.currentTime)
+    currentTime.set(evt.target.currentTime)
   }
 
   function onLoadedMetaData(
     evt: Event & {
-      currentTarget: EventTarget & HTMLAudioElement
+      target: EventTarget & HTMLAudioElement
     }
   ) {
-    const $audioPlayerManager = get(audioPlayerManager)
-    if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
-
-    duration.set(evt.currentTarget.duration)
-    $audioPlayerManager.setDuration(evt.currentTarget.duration)
+    duration.set(evt.target.duration)
   }
 
   // [TODO] dispatch event through debounced?...

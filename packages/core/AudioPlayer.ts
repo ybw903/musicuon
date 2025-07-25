@@ -3,13 +3,17 @@ import PlayQueue from './PlayQueue'
 import type { ISong } from './PlayList'
 import AudioVisualizer from './AudioVisualizer'
 
+export interface AudioEvent extends Event {
+  target: EventTarget & HTMLAudioElement
+}
+
 class AudioPlayer {
   #volume: number = 1
   #ctx?: AudioContext
   #gainNode?: GainNode
   #analyserNode?: AnalyserNode
   #source?: MediaElementAudioSourceNode
-  #sourceElement?: HTMLAudioElement
+  #audioElement: HTMLAudioElement
   #playing: boolean = false
   #initSource: boolean = false
   #currentTime: number = 0
@@ -23,8 +27,30 @@ class AudioPlayer {
   repeatPlay: boolean = false
   shufflePlay: boolean = false
 
-  constructor({ options }: { options?: { visualCanvasElement?: HTMLCanvasElement } } = {}) {
+  constructor({
+    options
+  }: {
+    options?: {
+      visualCanvasElement?: HTMLCanvasElement
+      onEndedAudio?: (evt: AudioEvent) => void
+      onLoadedMetaData?: (evt: AudioEvent) => void
+      onCurrentTime?: (evt: AudioEvent) => void
+    }
+  } = {}) {
     this.#playQueue = new PlayQueue()
+    this.#audioElement = new Audio()
+
+    this.#audioElement.addEventListener('loadedmetadata', (evt) => {
+      options?.onLoadedMetaData?.(evt as AudioEvent)
+    })
+
+    this.#audioElement.addEventListener('timeupdate', (evt) => {
+      options?.onCurrentTime?.(evt as AudioEvent)
+    })
+
+    this.#audioElement.addEventListener('ended', async (evt) => {
+      options?.onEndedAudio?.(evt as AudioEvent)
+    })
 
     if (options?.visualCanvasElement) {
       this.#visualCanvasElement = options?.visualCanvasElement
@@ -47,6 +73,7 @@ class AudioPlayer {
     if (!this.#ctx) {
       this.#initAudioContext()
     }
+
     if (this.#ctx?.state === 'suspended') {
       await this.#ctx?.resume()
     }
@@ -56,12 +83,12 @@ class AudioPlayer {
     // TODO: check null only specific module
     if (!song) return
 
-    if (this.#sourceElement && this.#sourceElement?.src !== song.src) {
-      this.#sourceElement.src = song.src
+    if (this.#audioElement && this.#audioElement?.src !== song.src) {
+      this.#audioElement.src = song.src
     }
 
-    if (this.#sourceElement) {
-      this.#sourceElement.play()
+    if (this.#audioElement) {
+      this.#audioElement.play()
       this.#playing = true
     }
 
@@ -74,11 +101,12 @@ class AudioPlayer {
     if (!this.#ctx) {
       this.#initAudioContext()
     }
+
     if (this.#ctx?.state === 'running') {
       await this.#ctx?.suspend()
     }
 
-    this.#sourceElement?.pause()
+    this.#audioElement?.pause()
     this.#audioVisualizer?.stopDraw()
     this.#playing = false
   }
@@ -116,8 +144,8 @@ class AudioPlayer {
 
     this.#currentTime = time
 
-    if (!this.#sourceElement) return
-    this.#sourceElement.currentTime = time
+    if (!this.#audioElement) return
+    this.#audioElement.currentTime = time
   }
 
   getSong() {
@@ -136,33 +164,6 @@ class AudioPlayer {
     this.#currentTime = currentTime
   }
 
-  setSource(source: HTMLAudioElement) {
-    if (!this.#ctx) {
-      this.#initAudioContext()
-    }
-
-    if (this.#source && this.#gainNode) {
-      this.#source.disconnect(this.#gainNode)
-    }
-
-    if (this.#source && this.#analyserNode) {
-      this.#source.disconnect(this.#analyserNode)
-    }
-
-    this.#sourceElement = source
-    this.#source = this.#ctx?.createMediaElementSource(source)
-
-    if (this.#gainNode) {
-      this.#source?.connect(this.#gainNode)
-    }
-
-    if (this.#analyserNode) {
-      this.#source?.connect(this.#analyserNode)
-    }
-
-    this.#initSource = true
-  }
-
   // https://developer.chrome.com/blog/autoplay?hl=ko#webaudio...
   #initAudioContext() {
     if (typeof window.AudioContext !== 'undefined') {
@@ -177,9 +178,19 @@ class AudioPlayer {
       this.#gainNode = this.#ctx.createGainNode()
     }
 
+    this.#source = this.#ctx?.createMediaElementSource(this.#audioElement)
+
+    if (this.#gainNode) {
+      this.#source?.connect(this.#gainNode)
+    }
+
     if (this.#visualCanvasElement) {
       this.#analyserNode = this.#ctx?.createAnalyser()
       this.#audioVisualizer = new AudioVisualizer(this.#visualCanvasElement, this.#analyserNode)
+    }
+
+    if (this.#analyserNode) {
+      this.#gainNode?.connect(this.#analyserNode)
     }
 
     if (this.#gainNode) {
@@ -187,7 +198,11 @@ class AudioPlayer {
     }
 
     if (this.#ctx?.destination) {
-      this.#gainNode?.connect(this.#ctx.destination)
+      if (this.#analyserNode) {
+        this.#analyserNode?.connect(this.#ctx.destination)
+      } else {
+        this.#gainNode?.connect(this.#ctx?.destination)
+      }
     }
   }
 
