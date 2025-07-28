@@ -1,13 +1,15 @@
 {
   "name": "musicuon",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "turbo run dev",
+    "dev:tauri": "tauri dev",
     "dev:audio-player": "turbo run dev --filter=@musicuon/audio-player --concurrency=50",
     "dev:play-list": "turbo run dev --filter=@musicuon/play-list --concurrency=50",
     "build": "turbo run build",
+    "build:tauri": "tauri build",
     "clean": "turbo run clean && rm -rf node_modules",
     "check-types": "turbo run check-types"
   },
