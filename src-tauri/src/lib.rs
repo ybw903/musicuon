@@ -7,7 +7,7 @@ mod metadata;
 async fn open_play_list_window(app: AppHandle) {
      if app.get_webview_window("play-list").is_none() {
         // TODO: add env condition
-        let _new_window = tauri::WebviewWindowBuilder::new(&app, "play-list", tauri::WebviewUrl::App("http://localhost:5173/play-list/index.html".into()))
+        let _new_window = tauri::WebviewWindowBuilder::new(&app, "play-list", tauri::WebviewUrl::App("/play-list/index.html".into()))
             .title("play-list | musicuon")
             .inner_size(1280.0, 940.0)
             .disable_drag_drop_handler()

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { PlayIcon, PauseIcon, Volume2Icon, ListIcon } from 'lucide-svelte'
-  import musicuonLogo from '../../assets/musicuon_logo.png'
 
   import dayjs from 'dayjs'
   import durationPlugin from 'dayjs/plugin/duration'
@@ -12,6 +11,7 @@
   import NextSongIcon from './icons/NextSongIcon.svelte'
   import ShuffleIcon from './icons/ShuffleIcon.svelte'
   import RepeatIcon from './icons/RepeatIcon.svelte'
+  import MusicuonLogoIcon from './icons/MusicuonLogoIcon.svelte'
 
   dayjs.extend(durationPlugin)
 
@@ -62,12 +62,7 @@
     </div>
     <div class="mt-4 flex items-center justify-center">
       <div class="flex h-32 w-32 items-center justify-center rounded-xl bg-gray-500">
-        <img
-          class="drop-shadow-lg"
-          src={musicuonLogo}
-          width={80}
-          height={80}
-          alt="기본 앨범 커버 이미지" />
+        <MusicuonLogoIcon />
       </div>
     </div>
     <div class="mt-4">
