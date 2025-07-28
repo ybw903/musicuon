@@ -81,6 +81,7 @@ declare module '$env/static/private' {
 	export const npm_package_type: string;
 	export const SHLVL: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
+	export const npm_package_dependencies_svelte_radix_slider: string;
 	export const npm_package_exports___default: string;
 	export const npm_package_dependencies__atlaskit_pragmatic_drag_and_drop_flourish: string;
 	export const npm_package_peerDependencies_svelte: string;
@@ -180,6 +181,7 @@ declare module '$env/dynamic/private' {
 		npm_package_type: string;
 		SHLVL: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
+		npm_package_dependencies_svelte_radix_slider: string;
 		npm_package_exports___default: string;
 		npm_package_dependencies__atlaskit_pragmatic_drag_and_drop_flourish: string;
 		npm_package_peerDependencies_svelte: string;

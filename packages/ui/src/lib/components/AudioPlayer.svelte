@@ -7,6 +7,7 @@
   import { onMount } from 'svelte'
   import clsx from 'clsx'
   import { audioPlayer } from '../../store'
+  import AudioPlaytimeSlider from './AudioPlaytimeSlider.svelte'
   import PrevSongIcon from './icons/PrevSongIcon.svelte'
   import NextSongIcon from './icons/NextSongIcon.svelte'
   import ShuffleIcon from './icons/ShuffleIcon.svelte'
@@ -15,7 +16,6 @@
   dayjs.extend(durationPlugin)
 
   export let visualCanvasRef: HTMLCanvasElement
-  let audioRef: HTMLAudioElement
 
   const {
     audioPlayerManager,
@@ -71,12 +71,7 @@
       </div>
     </div>
     <div class="mt-4">
-      <input
-        class="bg-white"
-        type="range"
-        value={$currentTime}
-        max={$duration}
-        on:change={onPlayTime} />
+      <AudioPlaytimeSlider />
       <div class="flex justify-between">
         <p class="text-sm text-white">{displayCurrentTime}</p>
         <p class="text-sm text-white">{displayDuration}</p>

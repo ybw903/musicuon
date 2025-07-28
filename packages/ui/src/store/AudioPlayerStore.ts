@@ -16,6 +16,8 @@ function createAudioPlayerStore() {
   const repeatPlay = writable(false)
   const shufflePlay = writable(false)
 
+  const isSeeking = writable(false)
+
   const init = async (options: { options?: { visualCanvasElement?: HTMLCanvasElement } } = {}) => {
     const audioPlayer = new AudioPlayer({
       options: {
@@ -128,6 +130,8 @@ function createAudioPlayerStore() {
       target: EventTarget & HTMLAudioElement
     }
   ) {
+    if (get(isSeeking)) return
+
     currentTime.set(evt.target.currentTime)
   }
 
@@ -139,19 +143,15 @@ function createAudioPlayerStore() {
     duration.set(evt.target.duration)
   }
 
-  // [TODO] dispatch event through debounced?...
-  function onPlayTime(
-    evt: Event & {
-      currentTarget: EventTarget & HTMLInputElement
-    }
-  ) {
+  function onPlayTime(playTime: number) {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
 
     onPause().then(() => {
-      currentTime.set(Number(evt.currentTarget.value))
-      $audioPlayerManager.playtime(Number(evt.currentTarget.value))
+      currentTime.set(playTime)
+      $audioPlayerManager.playtime(playTime)
       onPlay()
+      isSeeking.set(false)
     })
   }
 
@@ -195,6 +195,7 @@ function createAudioPlayerStore() {
     currentSong,
     repeatPlay,
     shufflePlay,
+    isSeeking,
 
     onPlay,
     onPause,

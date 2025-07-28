@@ -49,6 +49,7 @@
     "@musicuon/core": "workspace:*",
     "@musicuon/tailwindcss-config": "workspace:*",
     "dayjs": "^1.11.13",
-    "lucide-svelte": "^0.525.0"
+    "lucide-svelte": "^0.525.0",
+    "svelte-radix-slider": "^0.1.2"
   }
 }
