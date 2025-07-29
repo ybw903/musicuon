@@ -30,8 +30,6 @@ function createAudioPlayerStore() {
 
     audioPlayer.listenSelectedPlayList(async () => {
       await onPause()
-      const song = await audioPlayer.getSong()
-      currentSong.set(song)
       await onPlay()
     })
 
@@ -41,21 +39,23 @@ function createAudioPlayerStore() {
       await onPause()
       currentTime.set(0)
       duration.set(0)
-
-      const song = await audioPlayer.getSong()
-      currentSong.set(song)
+      isPlaying.set(false)
       await onPlay()
     })
 
     audioPlayerManager.set(audioPlayer)
-
-    const song = await audioPlayer.getSong()
-    currentSong.set(song)
   }
 
   async function onPlay() {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
+
+    const song = await $audioPlayerManager.getSong()
+    currentSong.set(song)
+
+    if (!song) {
+      return
+    }
 
     await $audioPlayerManager.play()
     isPlaying.set(true)
