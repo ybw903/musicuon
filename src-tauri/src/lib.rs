@@ -25,7 +25,7 @@ pub fn run() {
       Migration {
           version: 1,
           description: "create_initial_tables",
-          sql: "CREATE TABLE songs (id INTEGER PRIMARY KEY, path TEXT);",
+          sql: "CREATE TABLE songs (id INTEGER PRIMARY KEY, value TEXT);",
           kind: MigrationKind::Up,
       }
   ];

@@ -36,7 +36,6 @@ class PlayList {
       this.#storage = new DbStorage()
     }
 
-    this.loadList()
     this.#bindListeners()
     this.#options = options
   }
@@ -155,16 +154,25 @@ class PlayList {
   }
 
   async loadList() {
-    const keys = await this.#storage.keys()
+    if (this.#options?.storage === 'DB') {
+      const list = (await this.#storage.getAll?.()) ?? []
+      this.#list = list.map((stored: any) => {
+        const bufferJson = JSON.parse(stored.value)
+        return { id: stored.id, ...JSON.parse(Buffer.from(bufferJson.data).toString()) }
+      })
+    } else {
+      const keys = await this.#storage.keys()
 
-    const list = []
-    for (const key of keys) {
-      const buffer = await this.#storage.get(key)
-      if (buffer) {
-        list.push({ id: key, ...(buffer.toJSON() as unknown as Omit<ISong, 'id'>) })
+      const list = []
+      for (const key of keys) {
+        const buffer = await this.#storage.get(key)
+        if (buffer) {
+          list.push({ id: key, ...(buffer.toJSON() as unknown as Omit<ISong, 'id'>) })
+        }
       }
+      this.#list = list
     }
-    this.#list = list
+
     this.#initLoad = true
   }
 

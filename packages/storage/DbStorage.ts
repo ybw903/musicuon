@@ -11,36 +11,38 @@ class DbStorage implements IStorage {
 
       if (!this.db) return
 
-      await this.db.execute('INSERT into songs (id, path) VALUES ($1, $2)', [key, value])
+      await this.db.execute('INSERT into songs (id, value) VALUES ($1, $2)', [key, value])
     } catch (error) {
       throw error
     }
   }
 
-  // TODO: change return type
-  async get(key: string): Promise<any> {
+  async get(key: string): Promise<{ id: string; value: string } | null> {
     try {
       await this.init()
 
       if (!this.db) return null
 
-      const songs = await this.db.select<string[]>('SELECT * from songs WHERE id = $1', [key])
+      const songs = await this.db.select<{ id: string; value: string }[]>(
+        'SELECT * from songs WHERE id = $1',
+        [key]
+      )
 
       if (songs.length === 0) return null
 
-      return songs
+      return songs[0]
     } catch (error) {
       throw error
     }
   }
 
-  async getAll(): Promise<string[]> {
+  async getAll(): Promise<{ id: string; value: string }[]> {
     try {
       await this.init()
 
       if (!this.db) return []
 
-      const songs = await this.db.select<string[]>('SELECT * from songs')
+      const songs = await this.db.select<{ id: string; value: string }[]>('SELECT * from songs')
 
       return songs
     } catch (error) {
