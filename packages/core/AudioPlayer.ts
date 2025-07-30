@@ -57,10 +57,6 @@ class AudioPlayer {
     }
   }
 
-  openPlayListWindow() {
-    invoke('open_play_list_window')
-  }
-
   async listenSelectedPlayList(onSelect: (song: ISong) => Promise<void>) {
     this.#playQueue.listenSelectedPlayList(onSelect)
   }

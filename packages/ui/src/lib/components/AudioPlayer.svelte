@@ -18,7 +18,6 @@
   export let visualCanvasRef: HTMLCanvasElement
 
   const {
-    audioPlayerManager,
     isPlaying,
     volume,
     duration,
@@ -27,7 +26,6 @@
     repeatPlay,
     shufflePlay,
 
-    onPlayTime,
     onShufflePlay,
     onPrev,
     onPause,
@@ -44,10 +42,6 @@
   onMount(async () => {
     audioPlayer.init(visualCanvasRef ? { options: { visualCanvasElement: visualCanvasRef } } : {})
   })
-
-  function handleOpenPlayList() {
-    $audioPlayerManager?.openPlayListWindow()
-  }
 </script>
 
 <div class="h-full w-full bg-gray-900">
@@ -56,9 +50,6 @@
       <p class="text-white">
         {$currentSong ? $currentSong.name : '재생할 노래를 목록에 추가해주세요.'}
       </p>
-      <button on:click={handleOpenPlayList}>
-        <ListIcon color={'#fff'} />
-      </button>
     </div>
     <div class="mt-4 flex items-center justify-center">
       <div class="flex h-32 w-32 items-center justify-center rounded-xl bg-gray-500">

@@ -2,7 +2,7 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "enables the default permissions",
-  "windows": ["main", "play-list"],
+  "windows": ["main", "audio-player"],
   "permissions": [
     "core:default",
     "dialog:allow-open",

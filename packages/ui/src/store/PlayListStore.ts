@@ -17,6 +17,7 @@ function createPlayListStore() {
 
   const selectSong = async (index: number) => {
     if (!playListManager) throw new Error('Store needs to be initialized!')
+    await playListManager.openAudioPlayerWindow()
     playListManager.selectSong(index)
   }
 

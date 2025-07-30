@@ -4,13 +4,14 @@ use tauri::{AppHandle, Manager};
 mod metadata;
 
 #[tauri::command]
-async fn open_play_list_window(app: AppHandle) {
-     if app.get_webview_window("play-list").is_none() {
-        // TODO: add env condition
-        let _new_window = tauri::WebviewWindowBuilder::new(&app, "play-list", tauri::WebviewUrl::App("/play-list/index.html".into()))
-            .title("play-list | musicuon")
-            .inner_size(1280.0, 940.0)
+async fn open_audio_player_window(app: AppHandle) {
+     if app.get_webview_window("audio-player").is_none() {
+        let _new_window = tauri::WebviewWindowBuilder::new(&app, "audio-player", tauri::WebviewUrl::App("/index.html".into()))
+            .title("audio-player | musicuon")
+            .inner_size(360.0, 444.0)
             .disable_drag_drop_handler()
+            .resizable(false)
+            .fullscreen(false)
             .build()
             .unwrap();
      };
@@ -47,7 +48,7 @@ pub fn run() {
       Ok(())
     })
     .invoke_handler(tauri::generate_handler![
-      open_play_list_window, metadata::write_metadata
+      open_audio_player_window, metadata::write_metadata
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

@@ -13,10 +13,11 @@
     "windows": [
       {
         "title": "musicuon",
-        "width": 360,
-        "height": 444,
-        "resizable": false,
-        "fullscreen": false
+        "width": 1280,
+        "height": 940,
+        "resizable": true,
+        "fullscreen": false,
+        "url": "/play-list/index.html"
       }
     ],
     "security": {

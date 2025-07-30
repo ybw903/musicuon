@@ -3,7 +3,8 @@ import { parseWebStream, type IFormat } from 'music-metadata'
 import { type IStorage } from '@musicuon/storage'
 import { OpfsStorage, DbStorage } from '@musicuon/storage'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
-import { convertFileSrc } from '@tauri-apps/api/core'
+import { convertFileSrc, invoke } from '@tauri-apps/api/core'
+import { Webview } from '@tauri-apps/api/webview'
 
 interface PlayListOptions {
   storage?: 'DB' | 'OPFS'
@@ -126,7 +127,19 @@ class PlayList {
     emit('removed_play_list', { idx })
   }
 
-  selectSong(idx: number) {
+  async openAudioPlayerWindow() {
+    const audioPlayerWebview = await Webview.getByLabel('audio-player')
+    if (audioPlayerWebview) return
+
+    invoke('open_audio_player_window')
+    return new Promise((resolve) =>
+      setTimeout(() => {
+        resolve(undefined)
+      }, 250)
+    )
+  }
+
+  async selectSong(idx: number) {
     emit('selected_play_list', { idx, song: this.#list[idx] })
   }
 
