@@ -1,7 +1,14 @@
 <script lang="ts">
+  import { onDestroy, onMount } from 'svelte'
   import { toast, Toaster } from 'svelte-french-toast'
   import { PlayListNavigation, PlayListHeader, PlayList, SongDetailModal } from '@musicuon/ui'
   import { resolveEnv } from './utils/envUtils'
+  import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
+  import { emit, type UnlistenFn } from '@tauri-apps/api/event'
+  import { confirm } from '@tauri-apps/plugin-dialog'
+
+  const appWindow = getCurrentWebviewWindow()
+  let unlistenCloseRequestFn: UnlistenFn
 
   let env = resolveEnv()
 
@@ -21,6 +28,21 @@
       error: '수정 실패'
     })
   }
+
+  onMount(async () => {
+    unlistenCloseRequestFn = await appWindow.onCloseRequested(async (evt) => {
+      const confirmed = await confirm('Musicuon을 종료하시겠습니까?')
+      if (!confirmed) {
+        evt.preventDefault()
+        return
+      }
+      emit('playlist_close')
+    })
+  })
+
+  onDestroy(() => {
+    unlistenCloseRequestFn()
+  })
 </script>
 
 <main class="min-h-screen w-full bg-gray-900">
