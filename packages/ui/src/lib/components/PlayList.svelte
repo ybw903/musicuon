@@ -85,9 +85,9 @@
       <span class="font-bold">추가</span>
     </button>
   </header>
-  <div class="mt-6">
+  <div class="mt-6 h-[calc(100%-40px-24px)] overflow-auto">
     {#if existPlayListItem}
-      <div class="flex bg-slate-800 px-4 py-3">
+      <div class="sticky top-0 flex bg-slate-800 px-4 py-3">
         <div class="w-1/4 text-left text-xs text-white">파일명</div>
         <div class="w-1/4 text-left text-xs text-white">제목</div>
         <div class="w-1/4 text-left text-xs text-white">아티스트</div>

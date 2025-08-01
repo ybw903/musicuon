@@ -45,13 +45,13 @@
   })
 </script>
 
-<main class="min-h-screen w-full bg-gray-900">
+<main class="flex h-screen w-full flex-col bg-gray-900">
   <PlayListHeader />
-  <div class="flex w-full flex-col gap-1 px-6 py-5 md:flex-row">
-    <aside class="h-full w-full p-4 md:w-[320px]">
+  <div class="flex w-full flex-1 flex-col gap-1 overflow-hidden px-6 py-5 md:flex-row">
+    <aside class="w-full p-4 md:w-[320px]">
       <PlayListNavigation />
     </aside>
-    <section class="h-full w-full md:w-[calc(100%-320px)]">
+    <section class="w-full flex-1 md:w-[calc(100%-320px)]">
       <PlayList {env} onSelectShowSongDetail={handleSelectShowSongDetail} />
     </section>
   </div>
