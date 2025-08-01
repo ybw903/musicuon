@@ -17,6 +17,18 @@ class DbStorage implements IStorage {
     }
   }
 
+  async update(key: string, value: Uint8Array) {
+    try {
+      await this.init()
+
+      if (!this.db) return
+
+      await this.db.execute('UPDATE songs set value = ($1) WHERE id = ($2)', [value, key])
+    } catch (error) {
+      throw error
+    }
+  }
+
   async get(key: string): Promise<{ id: string; value: string } | null> {
     try {
       await this.init()

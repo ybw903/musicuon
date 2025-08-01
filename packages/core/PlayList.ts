@@ -64,7 +64,14 @@ class PlayList {
       const targetSongIdx = this.#list.findIndex((targetSong) => targetSong.path === path)
       if (targetSongIdx === -1) return
 
-      this.#list[targetSongIdx] = evt.payload
+      const targetSong = this.#list[targetSongIdx]
+      const updatedTargetSong = {
+        ...targetSong,
+        ...evt.payload
+      }
+
+      this.#storage.update(targetSong.id, Buffer.from(JSON.stringify(updatedTargetSong)))
+      this.#list[targetSongIdx] = updatedTargetSong
       if (this.#options?.onUpdateList) {
         this.#options.onUpdateList(this.#list)
       }

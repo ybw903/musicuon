@@ -15,6 +15,9 @@
     artist: song?.artist ?? '',
     year: song?.year ?? 0
   }
+  let songFormError = {
+    year: false
+  }
 
   $: if (song) {
     showModal = true
@@ -53,6 +56,12 @@
   }
 
   function handleEditSongDetail() {
+    if (songForm.year !== 0 && String(songForm.year).length !== 4) {
+      songFormError.year = true
+      return
+    } else {
+      songFormError.year = false
+    }
     const promise = invoke('write_metadata', {
       song: {
         ...song,
@@ -142,6 +151,9 @@
             on:input={(evt) => handleEditSongForm(evt, 'year')}
             value={songForm.year} />
         </div>
+        {#if songFormError.year}
+          <span class="text-right text-[10px] text-red-500">유효하지 않은 연도입니다.</span>
+        {/if}
       </div>
     </section>
   </div>

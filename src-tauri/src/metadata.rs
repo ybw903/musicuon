@@ -53,7 +53,9 @@ pub async fn write_metadata(song: Song, app_handle: tauri::AppHandle) {
   tag.set_title(cloned.title);
   tag.set_artist(cloned.artist);
   tag.set_album(cloned.album);
-  tag.set_year(cloned.year);
+  if cloned.year != 0 {
+    tag.set_year(cloned.year);
+  }
 
   tag.save_to_path(cloned.path, WriteOptions::default())
 		.expect("ERROR: Failed to write the tag!");

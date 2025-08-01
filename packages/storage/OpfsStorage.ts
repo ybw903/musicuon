@@ -17,6 +17,10 @@ class OpfsStorage implements IStorage {
     stream.close()
   }
 
+  async update(key: string, value: Uint8Array): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
+
   async get(key: string): Promise<Buffer | null> {
     try {
       await this.init()
