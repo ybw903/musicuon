@@ -12,6 +12,7 @@
   import ShuffleIcon from './icons/ShuffleIcon.svelte'
   import RepeatIcon from './icons/RepeatIcon.svelte'
   import MusicuonLogoIcon from './icons/MusicuonLogoIcon.svelte'
+  import hotkeys from 'hotkeys-js'
 
   dayjs.extend(durationPlugin)
 
@@ -38,6 +39,31 @@
   $: displayVolume = $volume * 100
   $: displayDuration = dayjs.duration($duration, 's').format('mm:ss')
   $: displayCurrentTime = dayjs.duration($currentTime, 's').format('mm:ss')
+
+  hotkeys('space', function (event) {
+    event.preventDefault()
+    if ($isPlaying) {
+      onPause()
+    } else {
+      onPlay()
+    }
+  })
+
+  hotkeys('left', function (event) {
+    onPrev()
+  })
+
+  hotkeys('right', function (event) {
+    onNext()
+  })
+
+  hotkeys('R', function (event) {
+    onRepeatPlay()
+  })
+
+  hotkeys('S', function (event) {
+    onShufflePlay()
+  })
 
   onMount(async () => {
     audioPlayer.init(visualCanvasRef ? { options: { visualCanvasElement: visualCanvasRef } } : {})

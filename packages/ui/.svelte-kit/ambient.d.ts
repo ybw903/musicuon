@@ -44,6 +44,7 @@ declare module '$env/static/private' {
 	export const npm_package_dependencies_dayjs: string;
 	export const USER: string;
 	export const npm_package_scripts_check_types: string;
+	export const npm_package_dependencies_hotkeys_js: string;
 	export const PNPM_SCRIPT_SRC_DIR: string;
 	export const npm_package_devDependencies__tailwindcss_vite: string;
 	export const npm_package_devDependencies_vite_tsconfig_paths: string;
@@ -144,6 +145,7 @@ declare module '$env/dynamic/private' {
 		npm_package_dependencies_dayjs: string;
 		USER: string;
 		npm_package_scripts_check_types: string;
+		npm_package_dependencies_hotkeys_js: string;
 		PNPM_SCRIPT_SRC_DIR: string;
 		npm_package_devDependencies__tailwindcss_vite: string;
 		npm_package_devDependencies_vite_tsconfig_paths: string;
