@@ -9,7 +9,6 @@ async fn open_audio_player_window(app: AppHandle) {
         let _new_window = tauri::WebviewWindowBuilder::new(&app, "audio-player", tauri::WebviewUrl::App("/index.html".into()))
             .title("audio-player | musicuon")
             .inner_size(360.0, 444.0)
-            .disable_drag_drop_handler()
             .resizable(false)
             .fullscreen(false)
             .build()

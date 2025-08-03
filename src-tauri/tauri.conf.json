@@ -17,6 +17,7 @@
         "height": 940,
         "resizable": true,
         "fullscreen": false,
+        "dragDropEnabled": false,
         "url": "/play-list/index.html"
       }
     ],
