@@ -13,6 +13,7 @@
   export let handleSelect: (idx: number) => void
   export let handleSelectShowSongDetail: (song: ISong) => void
   export let handleDelete: (idx: number) => void
+  export let disabledDraggable: boolean = false
 
   let listItemRef: HTMLLIElement
   let dragging = false
@@ -20,6 +21,7 @@
 
   onMount(() => {
     if (!listItemRef) return
+    if (disabledDraggable) return
 
     const cleanup = combine(
       draggable({
