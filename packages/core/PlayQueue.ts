@@ -1,5 +1,5 @@
-import { type ISong } from './PlayList'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
+import type { ISong } from './types'
 
 type Resolver = (value: ISong | null | number) => void
 

@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { parseWebStream, type IFormat } from 'music-metadata'
+import { parseWebStream, type IAudioMetadata, type IFormat } from 'music-metadata'
 import { type IStorage } from '@musicuon/storage'
 import { OpfsStorage, DbStorage } from '@musicuon/storage'
 import { listen, emit, type Event } from '@tauri-apps/api/event'
@@ -58,17 +58,15 @@ class PlayList {
       emit('length_response', { idx, length: this.#list.length })
     })
 
-    await listen('update_song_metadata', (evt: Event<ISong>) => {
-      const { path } = evt.payload
+    await listen('update_song_metadata', async (evt: Event<ISong>) => {
+      const { id, src } = evt.payload
 
-      const targetSongIdx = this.#list.findIndex((targetSong) => targetSong.path === path)
+      const targetSongIdx = this.#list.findIndex((targetSong) => targetSong.id === id)
       if (targetSongIdx === -1) return
 
       const targetSong = this.#list[targetSongIdx]
-      const updatedTargetSong = {
-        ...targetSong,
-        ...evt.payload
-      }
+      const metadata = await this.#parseSongMetadata(src)
+      const updatedTargetSong = this.#mergeWithMetadata(targetSong, metadata)
 
       this.#storage.update(targetSong.id, Buffer.from(JSON.stringify(updatedTargetSong)))
       this.#list[targetSongIdx] = updatedTargetSong
@@ -82,15 +80,7 @@ class PlayList {
     const key = String(new Date().valueOf())
 
     const src = convertFileSrc(path)
-    const response = await fetch(src)
-
-    const contentLength = response.headers.get('Content-Length')
-    const size = contentLength ? parseInt(contentLength, 10) : undefined
-
-    const metadata = await parseWebStream(response.body, {
-      mimeType: response.headers.get('Content-Type') || '',
-      size
-    })
+    const metadata = await this.#parseSongMetadata(src)
 
     const name = path.split('/').pop()
 
@@ -98,17 +88,15 @@ class PlayList {
       throw new Error('invalid path!')
     }
 
-    const song = {
-      id: key,
-      src,
-      path,
-      name,
-      title: metadata.common.title || '',
-      artist: metadata.common.artist || '',
-      album: metadata.common.album || '',
-      year: metadata.common.year || 0,
-      format: metadata.format
-    }
+    const song = this.#mergeWithMetadata(
+      {
+        id: key,
+        src,
+        path,
+        name
+      },
+      metadata
+    )
 
     await this.#storage.set(key, Buffer.from(JSON.stringify(song)))
     this.#list.push(song)
@@ -192,12 +180,38 @@ class PlayList {
       }
       this.#list = list
     }
+    console.log('?: ', this.#list)
 
     this.#initLoad = true
   }
 
   isInitLoad() {
     return this.#initLoad
+  }
+
+  async #parseSongMetadata(src: string) {
+    const response = await fetch(src)
+
+    const contentLength = response.headers.get('Content-Length')
+    const size = contentLength ? parseInt(contentLength, 10) : undefined
+
+    const metadata = await parseWebStream(response.body, {
+      mimeType: response.headers.get('Content-Type') || '',
+      size
+    })
+
+    return metadata
+  }
+
+  #mergeWithMetadata(song: Partial<ISong>, metadata: IAudioMetadata) {
+    return {
+      ...song,
+      title: metadata.common.title || '',
+      artist: metadata.common.artist || '',
+      album: metadata.common.album || '',
+      year: metadata.common.year || 0,
+      format: metadata.format
+    } as ISong
   }
 }
 

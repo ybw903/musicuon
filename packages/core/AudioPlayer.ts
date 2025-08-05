@@ -1,7 +1,7 @@
-import { invoke } from '@tauri-apps/api/core'
 import PlayQueue from './PlayQueue'
-import type { ISong } from './PlayList'
+
 import AudioVisualizer from './AudioVisualizer'
+import type { ISong } from './types'
 
 export interface AudioEvent extends Event {
   target: EventTarget & HTMLAudioElement

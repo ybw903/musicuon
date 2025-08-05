@@ -1,18 +1,19 @@
 <script lang="ts">
-  import { PlayIcon, PauseIcon, Volume2Icon, ListIcon } from 'lucide-svelte'
-
+  import { PlayIcon, PauseIcon, Volume2Icon } from 'lucide-svelte'
   import dayjs from 'dayjs'
   import durationPlugin from 'dayjs/plugin/duration'
   import { onMount } from 'svelte'
   import clsx from 'clsx'
-  import { audioPlayer } from '../../store'
+  import hotkeys from 'hotkeys-js'
+
   import AudioPlaytimeSlider from './AudioPlaytimeSlider.svelte'
   import PrevSongIcon from './icons/PrevSongIcon.svelte'
   import NextSongIcon from './icons/NextSongIcon.svelte'
   import ShuffleIcon from './icons/ShuffleIcon.svelte'
   import RepeatIcon from './icons/RepeatIcon.svelte'
   import MusicuonLogoIcon from './icons/MusicuonLogoIcon.svelte'
-  import hotkeys from 'hotkeys-js'
+  import { audioPlayer } from '../../store'
+  import { arrayBufferToBase64 } from '../../utils/base64'
 
   dayjs.extend(durationPlugin)
 
@@ -24,6 +25,7 @@
     duration,
     currentTime,
     currentSong,
+    currentSongArtwork,
     repeatPlay,
     shufflePlay,
 
@@ -79,7 +81,14 @@
     </div>
     <div class="mt-4 flex items-center justify-center">
       <div class="flex h-32 w-32 items-center justify-center rounded-xl bg-gray-500">
-        <MusicuonLogoIcon />
+        {#if $currentSongArtwork}
+          <img
+            class="rounded-xl"
+            src={`data:${$currentSongArtwork.format};base64, ${arrayBufferToBase64($currentSongArtwork.data)}`}
+            alt="artwork" />
+        {:else}
+          <MusicuonLogoIcon />
+        {/if}
       </div>
     </div>
     <div class="mt-4">

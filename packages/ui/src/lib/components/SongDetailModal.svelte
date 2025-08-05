@@ -1,8 +1,11 @@
 <script lang="ts">
-  import type { ISong } from '@musicuon/core'
-  import { invoke } from '@tauri-apps/api/core'
-  import Modal from './Modal.svelte'
+  import type { ISong, Artwork } from '@musicuon/core'
+  import { convertFileSrc, invoke } from '@tauri-apps/api/core'
+  import { open } from '@tauri-apps/plugin-dialog'
   import dayjs from 'dayjs'
+  import Modal from './Modal.svelte'
+  import MusicuonLogoIcon from './icons/MusicuonLogoIcon.svelte'
+  import { arrayBufferToBase64 } from '../../utils/base64'
 
   export let song: ISong
   export let onCloseModal: () => void
@@ -15,6 +18,9 @@
     artist: song?.artist ?? '',
     year: song?.year ?? 0
   }
+  let songArtwork: Artwork | null = null
+  let artworkFilePath = ''
+
   let songFormError = {
     year: false
   }
@@ -25,11 +31,24 @@
     songForm.artist = song.artist
     songForm.title = song.title
     songForm.year = song.year
+    invoke<Artwork>('get_artwork_metadata', {
+      request: {
+        path: song.path
+      }
+    }).then((result) => {
+      if (result) {
+        songArtwork = {
+          ...result
+        }
+      }
+    })
   } else {
     songForm.album = ''
     songForm.artist = ''
     songForm.title = ''
     songForm.year = 0
+    songArtwork = null
+    artworkFilePath = ''
   }
 
   let showModal = false
@@ -55,6 +74,22 @@
     }
   }
 
+  const handleArtworkFile = async () => {
+    // TODO: add env condition
+    const filePath = await open({
+      multiple: false,
+      filters: [
+        {
+          name: 'artwork-file-filter',
+          extensions: ['jpg', 'png']
+        }
+      ]
+    })
+
+    if (!filePath) return
+    artworkFilePath = filePath
+  }
+
   function handleEditSongDetail() {
     if (songForm.year !== 0 && String(songForm.year).length !== 4) {
       songFormError.year = true
@@ -65,7 +100,8 @@
     const promise = invoke('write_metadata', {
       song: {
         ...song,
-        ...songForm
+        ...songForm,
+        artwork_file_path: artworkFilePath
       }
     })
     onEditSongDetail(promise)
@@ -81,6 +117,24 @@
   </div>
   <div class="mt-4" slot="content">
     <section>
+      <div class="mb-4 flex items-center justify-center">
+        <button
+          class="flex h-32 w-32 items-center justify-center rounded-xl bg-gray-500"
+          aria-label="아트워크 파일 업로드"
+          on:click={handleArtworkFile}>
+          {#if artworkFilePath}
+            <img class="rounded-xl" src={convertFileSrc(artworkFilePath)} alt="To upload artwork" />
+          {:else if songArtwork}
+            <img
+              class="rounded-xl"
+              src={`data:${songArtwork.format};base64, ${arrayBufferToBase64(songArtwork.data)}`}
+              alt="artwork" />
+          {:else}
+            <MusicuonLogoIcon aria-hidden />
+          {/if}
+        </button>
+      </div>
+
       <h3 class="mb-2 text-lg font-semibold text-white">노래 파일 정보</h3>
       <div class="flex flex-col gap-2">
         <div class="flex items-center justify-between gap-4">

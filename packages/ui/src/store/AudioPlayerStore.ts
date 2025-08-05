@@ -1,5 +1,6 @@
 import { get, writable } from 'svelte/store'
-import { AudioPlayer, type ISong } from '@musicuon/core'
+import { AudioPlayer, type ISong, type Artwork } from '@musicuon/core'
+import { invoke } from '@tauri-apps/api/core'
 
 function createAudioPlayerStore() {
   let audioRef: HTMLAudioElement | null = null
@@ -12,6 +13,7 @@ function createAudioPlayerStore() {
   const currentTime = writable(0)
   const duration = writable(0)
   const currentSong = writable<ISong | null>(null)
+  const currentSongArtwork = writable<Artwork | null>(null)
 
   const repeatPlay = writable(false)
   const shufflePlay = writable(false)
@@ -52,6 +54,18 @@ function createAudioPlayerStore() {
 
     const song = await $audioPlayerManager.getSong()
     currentSong.set(song)
+    if (song) {
+      const artwork = await invoke<Artwork>('get_artwork_metadata', {
+        request: {
+          path: song.path
+        }
+      })
+      if (artwork) {
+        currentSongArtwork.set(artwork)
+      } else {
+        currentSongArtwork.set(null)
+      }
+    }
 
     if (!song) {
       return
@@ -193,6 +207,7 @@ function createAudioPlayerStore() {
     currentTime,
     duration,
     currentSong,
+    currentSongArtwork,
     repeatPlay,
     shufflePlay,
     isSeeking,

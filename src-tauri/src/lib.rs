@@ -47,7 +47,7 @@ pub fn run() {
       Ok(())
     })
     .invoke_handler(tauri::generate_handler![
-      open_audio_player_window, metadata::write_metadata
+      open_audio_player_window, metadata::write_metadata, metadata::get_artwork_metadata
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
