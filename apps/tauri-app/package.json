@@ -13,7 +13,8 @@
   "dependencies": {
     "@musicuon/ui": "workspace:*",
     "@musicuon/tailwindcss-config": "workspace:*",
-    "svelte-french-toast": "^1.2.0"
+    "svelte-french-toast": "^1.2.0",
+    "lucide-svelte": "^0.525.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",

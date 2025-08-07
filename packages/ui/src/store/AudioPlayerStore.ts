@@ -1,5 +1,5 @@
 import { get, writable } from 'svelte/store'
-import { AudioPlayer, type ISong, type Artwork } from '@musicuon/core'
+import { AudioPlayer, type ISong, type Artwork, EQ_FREQUENCIES } from '@musicuon/core'
 import { invoke } from '@tauri-apps/api/core'
 
 function createAudioPlayerStore() {
@@ -9,6 +9,7 @@ function createAudioPlayerStore() {
 
   const isPlaying = writable(false)
   const volume = writable(1)
+  const filterGains = writable<number[]>(EQ_FREQUENCIES.map(() => 0))
 
   const currentTime = writable(0)
   const duration = writable(0)
@@ -181,6 +182,13 @@ function createAudioPlayerStore() {
     $audioPlayerManager.volume(Number(evt.currentTarget.value) / 100)
   }
 
+  function onFilterGain(filterIndex: number, gain: number) {
+    const $audioPlayerManager = get(audioPlayerManager)
+    if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
+
+    $audioPlayerManager.filterGain(filterIndex, gain)
+  }
+
   function onRepeatPlay() {
     const $audioPlayerManager = get(audioPlayerManager)
     if (!$audioPlayerManager) throw new Error('Store needs to be initialized!')
@@ -211,6 +219,7 @@ function createAudioPlayerStore() {
     repeatPlay,
     shufflePlay,
     isSeeking,
+    filterGains,
 
     onPlay,
     onPause,
@@ -222,7 +231,8 @@ function createAudioPlayerStore() {
     onPlayTime,
     onVolume,
     onRepeatPlay,
-    onShufflePlay
+    onShufflePlay,
+    onFilterGain
   }
 }
 

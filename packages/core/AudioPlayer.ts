@@ -1,6 +1,7 @@
 import PlayQueue from './PlayQueue'
 
 import AudioVisualizer from './AudioVisualizer'
+import AudioEqualizer from './AudioEqualizer'
 import type { ISong } from './types'
 
 export interface AudioEvent extends Event {
@@ -11,6 +12,7 @@ class AudioPlayer {
   #volume: number = 1
   #ctx?: AudioContext
   #gainNode?: GainNode
+
   #analyserNode?: AnalyserNode
   #source?: MediaElementAudioSourceNode
   #audioElement: HTMLAudioElement
@@ -21,6 +23,7 @@ class AudioPlayer {
 
   #playQueue: PlayQueue
   #audioVisualizer?: AudioVisualizer
+  #audioEqualizer?: AudioEqualizer
   #visualCanvasElement?: HTMLCanvasElement
 
   // TODO: move to play queue
@@ -144,6 +147,10 @@ class AudioPlayer {
     this.#audioElement.currentTime = time
   }
 
+  filterGain(filterIndex: number, gain: number) {
+    this.#audioEqualizer?.onFilterGain(filterIndex, gain)
+  }
+
   getSong() {
     return this.#playQueue.pos()
   }
@@ -176,9 +183,10 @@ class AudioPlayer {
 
     this.#source = this.#ctx?.createMediaElementSource(this.#audioElement)
 
-    if (this.#gainNode) {
-      this.#source?.connect(this.#gainNode)
-    }
+    // TODO: add context initialization error
+    this.#audioEqualizer = new AudioEqualizer(this.#ctx!)
+    this.#audioEqualizer.connectFirstFilterNode(this.#source!)
+    this.#audioEqualizer.connectLastFilterNode(this.#gainNode!)
 
     if (this.#visualCanvasElement) {
       this.#analyserNode = this.#ctx?.createAnalyser()

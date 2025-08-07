@@ -57,6 +57,9 @@ importers:
       '@musicuon/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      lucide-svelte:
+        specifier: ^0.525.0
+        version: 0.525.0(svelte@4.2.20)
       svelte-french-toast:
         specifier: ^1.2.0
         version: 1.2.0(svelte@4.2.20)
