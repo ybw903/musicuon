@@ -7,6 +7,7 @@
   import hotkeys from 'hotkeys-js'
 
   import AudioPlaytimeSlider from './AudioPlaytimeSlider.svelte'
+  import AudioLyricViewer from './AudioLyricViewer.svelte'
   import PrevSongIcon from './icons/PrevSongIcon.svelte'
   import NextSongIcon from './icons/NextSongIcon.svelte'
   import ShuffleIcon from './icons/ShuffleIcon.svelte'
@@ -91,7 +92,16 @@
         {/if}
       </div>
     </div>
-    <div class="mt-4">
+
+    <div class="mt-8">
+      <div class="h-20">
+        {#if $currentSong}
+          <AudioLyricViewer songTitle={$currentSong?.title} artist={$currentSong?.artist} />
+        {/if}
+      </div>
+    </div>
+
+    <div class="mt-8">
       <AudioPlaytimeSlider />
       <div class="flex justify-between">
         <p class="text-sm text-white">{displayCurrentTime}</p>

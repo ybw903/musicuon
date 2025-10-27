@@ -15,9 +15,9 @@
 
   async function handleToggleOpenAudioEqualizer() {
     if (!isOpenAudioEqualizer) {
-      await appWindow.setSize(new LogicalSize(360.0, 639.0))
+      await appWindow.setSize(new LogicalSize(360.0, 767.0))
     } else {
-      await appWindow.setSize(new LogicalSize(360.0, 464.0))
+      await appWindow.setSize(new LogicalSize(360.0, 592.0))
     }
 
     isOpenAudioEqualizer = !isOpenAudioEqualizer

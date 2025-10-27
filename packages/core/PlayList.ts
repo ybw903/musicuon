@@ -180,7 +180,6 @@ class PlayList {
       }
       this.#list = list
     }
-    console.log('?: ', this.#list)
 
     this.#initLoad = true
   }
